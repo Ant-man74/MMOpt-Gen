@@ -1,0 +1,33 @@
+<algoConfig>
+	<!-- Genetic algorythm parameters -->
+	<paramsList id="geneticAlgoParams">
+		<param>
+			<name>mutationRate</name>
+			<value>0.2</value>
+		</param>
+		<param>
+			<name>crossOverRate</name>
+			<value>1</value>
+		</param>
+		<param>
+			<name>selectionMethod</name>
+			<value>2</value>
+		</param>
+	</paramsList>
+	
+	<!-- mmopt parameters -->
+	<paramsList id="mmoptParams">
+		<param>
+			<name>lambda</name>
+			<value>2</value>
+		</param>
+		<param>
+			<name>bufferLowerLimit</name>
+			<value>0</value>
+		</param>
+		<param>
+			<name>bufferUpperLimit</name>
+			<value>50</value>
+		</param>
+	</paramsList>
+</algoConfig>
