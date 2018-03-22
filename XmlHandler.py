@@ -45,13 +45,15 @@ class XmlHandler:
 	"""
 	@staticmethod
 	def getItemFrom(dictionnary, item):
+		ret = None
 		try:
 			if( dictionnary == "algoGen") :
-				XmlHandler.paramAlgoGen[item]
+				ret = XmlHandler.paramAlgoGen[item]
 			elif ( dictionnary == "mmopt" ) :
-				XmlHandler.paramMmopt[item]
+				ret = XmlHandler.paramMmopt[item]
 			else :
 				raise NameError("NameError: Unknown dictionnary")
+			return ret
 		except KeyError:
 			print ("KeyError: Unknown dictionnary entry")
 	

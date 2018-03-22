@@ -1,17 +1,30 @@
 <algoConfig>
 	<!-- Genetic algorythm parameters -->
 	<paramsList id="geneticAlgoParams">
+		
+		<param>
+			<name>popSize</name>
+			<value>50</value>
+		</param>
 		<param>
 			<name>mutationRate</name>
-			<value>0.2</value>
+			<value>2</value>
 		</param>
 		<param>
 			<name>crossOverRate</name>
 			<value>1</value>
 		</param>
 		<param>
+			<name>reproductionRate</name>
+			<value>80</value>
+		</param>
+		<param>
 			<name>selectionMethod</name>
 			<value>2</value>
+		</param>
+		<param>
+			<name>maxTour</name>
+			<value>50</value>
 		</param>
 	</paramsList>
 	
