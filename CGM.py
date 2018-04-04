@@ -7,15 +7,13 @@ CGM: Heuristic 2 for the MCT Problem
 *** l'idée est d'améliorer l'algo CGM en appliquant "Shifting Prefetches" si nécessaire  ***
 """
 
-
-import numpy as np             
 from scipy import *
-import math        
-import random
+
 import logging
+import math
+import numpy as np
 import operator 
-
-
+import random
 
 #=======================================================================================
 #=======================================================================================

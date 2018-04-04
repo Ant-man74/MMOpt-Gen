@@ -1,5 +1,6 @@
-from XmlHandler import XmlHandler
+
 from SchedulingHandler import SchedulingHandler
+from XmlHandler import XmlHandler
 
 import random
 

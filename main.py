@@ -1,8 +1,9 @@
 
-from XmlHandler import XmlHandler
+from Evaluation import Evaluation
 from Population import Population
 from Reproduction import Reproduction
 from SchedulingHandler import SchedulingHandler
+from XmlHandler import XmlHandler
 
 def main():
 	
@@ -39,7 +40,7 @@ def main():
 
 
 		# Rank the currentPop with pareto front
-
+		evaluator = Evaluation()
 		# Reproduce and replace the old population with the new one
 		reproduction = Reproduction(pop)
 		pop = reproduction.reproducePop()

@@ -13,7 +13,6 @@ import pickle
 import sys
 #from google.apputils import app
 
-#from NeededFcts import *
 from ECM import *
 from XmlHandler import XmlHandler
 

@@ -1,8 +1,8 @@
 
-import random
-
 from XmlHandler import XmlHandler
 from Individual import Individual
+
+import random
 
 class Reproduction:
 
