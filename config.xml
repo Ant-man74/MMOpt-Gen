@@ -1,6 +1,6 @@
 <algoConfig>
 	<!-- Genetic algorythm parameters -->
-	<paramsList id="geneticAlgoParams">
+	<paramsList id="algoGen">
 		
 		<param>
 			<name>popSize</name>
@@ -29,18 +29,14 @@
 	</paramsList>
 	
 	<!-- mmopt parameters -->
-	<paramsList id="mmoptParams">
+	<paramsList id="mmopt">
 		<param>
-			<name>lambda</name>
+			<name>alpha</name>
 			<value>2</value>
 		</param>
 		<param>
-			<name>bufferLowerLimit</name>
-			<value>0</value>
-		</param>
-		<param>
-			<name>bufferUpperLimit</name>
-			<value>50</value>
+			<name>beta</name>
+			<value>3</value>
 		</param>
 	</paramsList>
 </algoConfig>

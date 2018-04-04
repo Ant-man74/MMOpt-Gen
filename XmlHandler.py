@@ -32,9 +32,9 @@ class XmlHandler:
 		for categories in XmlHandler.treeConfig.iter('paramsList'):
 			id = categories.get("id")
 			for param in categories.iter('param'):
-				if( id == "geneticAlgoParams" ) :
+				if( id == "algoGen" ) :
 					XmlHandler.paramAlgoGen[param.find('name').text] = param.find('value').text
-				elif(id == "mmoptParams" ) :
+				elif(id == "mmopt" ) :
 					XmlHandler.paramMmopt[param.find('name').text] = param.find('value').text
 			pass
 		pass
@@ -45,7 +45,7 @@ class XmlHandler:
 	"""
 	@staticmethod
 	def getItemFrom(dictionnary, item):
-		ret = None
+		ret = 0
 		try:
 			if( dictionnary == "algoGen") :
 				ret = XmlHandler.paramAlgoGen[item]

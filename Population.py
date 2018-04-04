@@ -11,7 +11,7 @@ class Population:
 
 	def __init__ (self):
 		xmlHandler = XmlHandler()
-		self.popSize = xmlHandler.getItemFrom("algoGen","popSize")
+		self.popSize = int(xmlHandler.getItemFrom("algoGen","popSize"))
 
 	def generatePop(self):
 
@@ -19,7 +19,7 @@ class Population:
 			newIndividual = Individual()
 			self.currentPopulation.append(newIndividual)			
 			pass
-		return self.currentPopulation
+		return self
 
 	def getPopulation(self):
 		return self.currentPopulation

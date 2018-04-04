@@ -12,21 +12,22 @@ class Reproduction:
 
 	def __init__(self, popToRepro):
 		xmlHandler = XmlHandler()
-		self.mutationRate = xmlHandler.getItemFrom("algoGen","mutationRate")
-		self.crossOverRate = xmlHandler.getItemFrom("algoGen","crossOverRate")
+		self.mutationRate = int(xmlHandler.getItemFrom("algoGen","mutationRate"))
+		self.crossOverRate = int(xmlHandler.getItemFrom("algoGen","crossOverRate"))
 		self.population = popToRepro
+		print
 	
 	# ToDo should be scalable for more chromosome + refactoring
 	def reproducePop(self):
 		# only mate 80% of the pop
-		for x in range(0,(len(self.population.currentPopulation)*40)/100):
+		for x in range(0,int(round((len(self.population.currentPopulation)*40)/100))):
 			
 			# selection of two individual in the population
-			id1 = random.randint(0,self.population.popSize)
-			id2 = random.randint(0,self.population.popSize)
+			id1 = random.randint(0,self.population.popSize-1)
+			id2 = random.randint(0,self.population.popSize-1)
 
 			while id1 == id2:
-				id2 = random.randint(0,self.population.popSize):
+				id2 = random.randint(0,self.population.popSize)
 				pass
 
 			matingIndividual1 = self.population.currentPopulation[id1]
@@ -37,7 +38,7 @@ class Reproduction:
 
 			# extract chromosome
 			fullChromosome1 =  matingIndividual1.getFullChromosome()
-			fullChromosome2 =  matingIndividual1.getFullChromosome()
+			fullChromosome2 =  matingIndividual2.getFullChromosome()
 
 			if geneShuffle == 1:
 				# select which gene to shuffle
@@ -79,7 +80,7 @@ class Reproduction:
 			pass
 
 
-	def mutateIndividual(self, fullChromosome)
+	def mutateIndividual(self, fullChromosome):
 		
 		mutate = random.randint(1,100)
 		if mutate <= self.mutationRate:
