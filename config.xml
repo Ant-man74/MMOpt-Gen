@@ -24,7 +24,7 @@
 		</param>
 		<param>
 			<name>maxTour</name>
-			<value>50</value>
+			<value>2</value>
 		</param>
 	</paramsList>
 	

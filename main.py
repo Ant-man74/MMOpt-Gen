@@ -39,10 +39,11 @@ def main():
 			result.append([pop.currentPopulation[y],(Z,N,T)]);
 
 
-		# Rank the currentPop with pareto front
-		evaluator = Evaluation()
+		# Rank the currentPop with pareto front and return a new population post sorting
+		evaluator = Evaluation(result)
+		newPop = evaluator.tournamentRound()
 		# Reproduce and replace the old population with the new one
-		reproduction = Reproduction(pop)
+		reproduction = Reproduction(newPop)
 		pop = reproduction.reproducePop()
 
 	#pass

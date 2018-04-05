@@ -9,10 +9,13 @@ class Population:
 	currentPopulation = []
 	popSize = None
 
-	def __init__ (self):
-		xmlHandler = XmlHandler()
-		self.popSize = int(xmlHandler.getItemFrom("algoGen","popSize"))
-
+	def __init__ (self, alt = None):
+		if alt is None:
+			xmlHandler = XmlHandler()
+			self.popSize = int(xmlHandler.getItemFrom("algoGen","popSize"))
+		elif alt is True:
+			self.popSize = 0
+	
 	def generatePop(self):
 
 		for x in range(0,int(self.popSize)):
@@ -23,3 +26,6 @@ class Population:
 
 	def getPopulation(self):
 		return self.currentPopulation
+
+	def addIndividual(self, individual):
+		self.currentPopulation.append(individual)

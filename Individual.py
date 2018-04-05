@@ -16,17 +16,18 @@ class Individual:
 	"""
 	Init and pick chromosome randomly
 	"""
-	def __init__(self):
+	def __init__(self, chrom = None):
 		# Init
-		xmlHandler = XmlHandler()
-		self.bufferLowerBound = xmlHandler.getItemFrom("mmopt","bufferLowerBound")
-		self.bufferUpperBound = xmlHandler.getItemFrom("mmopt","bufferUpperBound")
-
-		zMin, zMax = SchedulingHandler.getBufferRange()
-		self.chromosome1 = random.randint(zMin,zMax) # Number of buffer 		
-		self.chromosome2 = random.randint(1,2) # Method to use (ECM or CGM)
-		
-		self.fullChromosome = [self.chromosome1,self.chromosome2,self.chromosome3]
+		if chrom is None: 
+			zMin, zMax = SchedulingHandler.getBufferRange()
+			self.chromosome1 = random.randint(zMin,zMax) # Number of buffer 		
+			self.chromosome2 = random.randint(1,2) # Method to use (ECM or CGM)
+			
+			self.fullChromosome = [self.chromosome1,self.chromosome2,self.chromosome3]
+		else:
+			self.chromosome1 = chrom[0]
+			self.chromosome2 = chrom[1]
+			self.fullChromosome = [self.chromosome1,self.chromosome2,self.chromosome3]
 
 	"""
 	Display the chromosome of the Individual
