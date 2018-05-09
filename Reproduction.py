@@ -18,6 +18,7 @@ class Reproduction:
 		print
 	
 	# ToDo should be scalable for more chromosome + refactoring
+	#Also this is quite a bad method as it's not how a point crossoer should be done but it's equivalent for the time being
 	def reproducePop(self):
 		# only mate 80% of the pop
 		for x in range(0,int(round((len(self.population.currentPopulation)*40)/100))):
@@ -27,7 +28,7 @@ class Reproduction:
 			id2 = random.randint(0,self.population.popSize-1)
 
 			while id1 == id2:
-				id2 = random.randint(0,self.population.popSize)
+				id2 = random.randint(0,self.population.popSize-1)
 				pass
 
 			matingIndividual1 = self.population.currentPopulation[id1]

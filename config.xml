@@ -24,7 +24,7 @@
 		</param>
 		<param>
 			<name>maxTour</name>
-			<value>2</value>
+			<value>100</value>
 		</param>
 	</paramsList>
 	
@@ -32,11 +32,11 @@
 	<paramsList id="mmopt">
 		<param>
 			<name>alpha</name>
-			<value>2</value>
+			<value>1</value>
 		</param>
 		<param>
 			<name>beta</name>
-			<value>3</value>
+			<value>1</value>
 		</param>
 	</paramsList>
 </algoConfig>

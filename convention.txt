@@ -1,0 +1,7 @@
+Coding convention
+
+- Line break after method declaration
+- Line break before and after conditional statement
+	--> no line break before pass
+	--> for conditional statement longer than one line, linebreak after conditional statement condition
+- CamelCase variable

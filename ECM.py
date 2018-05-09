@@ -4,16 +4,12 @@ ECM: Heuristic 1 for the MCT Problem
 *** l'idée est de reprendre les 2 étapes de l'heuristique H1 pour le pb 3-PSDPP ***
 """
 
-
 import numpy as np             
 #from scipy import *
 import math        
 import random
 import logging
 import operator 
-
-
-
 
 #=======================================================================================
 #=======================================================================================
@@ -28,6 +24,18 @@ Phase1: Find Pi= (Di,Bi,Ti) (Prefetches Schedule)
     Step4: Dét Ti: Dét pour chaque Te sa date de début de préchargement (t_i)
 """
 
+#=======================================================================================
+#                               Fonctions Principales
+#=======================================================================================
+"""
+Outputs of ECM: X,Y,Ry (Inputs) & N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
+"""
+def ECM(X,Y,Ry,alpha,beta,Z):
+    Di, N=PrefetchTile(X,Ry)
+    Bi=DestinationTile(Di,Z)
+    Ti=PrefetchStartDate(Di,alpha)
+    Sj,Uj,Delta=ComputeTile(Y,Ry,Di,Ti,alpha,beta)
+    return Sj,Z,Di,Bi,Ti,Uj,Delta, N
 
 #=======================================================================================
 #=================================== PrefetchTile() ====================================
@@ -35,14 +43,17 @@ Phase1: Find Pi= (Di,Bi,Ti) (Prefetches Schedule)
 Dét Di: la sequence de Prefetch correspondante à la liste de Te X de X'
 """ 
 def PrefetchTile(X,Ry):
-    Di=[]    
+    Di=[]  
+    N = 0 
     """ 1:Dét le DictX """
     DictX=FindDictX(X,Ry)
+    print(DictX)
     """ 2: Trier DicX ds Ordre Decroissant en fonct de DictX.Values() """
     ListDictX=sorted(DictX.items(),key=lambda x:x[1], reverse=True)
     for i in range(len(ListDictX)):
+        N = N+1
         Di.insert(i,ListDictX[i][0])
-    return Di
+    return Di, N
 #====================================== FindDictX() ====================================
 """
 Dét DictX: un Dictionnaire qui determine pour chaque Te de la liste X, le Nb d'occurence
@@ -139,7 +150,7 @@ def ComputeTile(Y,Ry,Di,Ti,alpha,beta):
     """ Dét Sj,Uj0 """
     DictAllConfigTs=FindAllConfigTs(Y,Ry,Di,Ti,alpha)
     ListAllConfigTs=sorted(DictAllConfigTs.items(),key=lambda x:x[1], reverse=False)
-    for j in xrange(len(ListAllConfigTs)):
+    for j in range(len(ListAllConfigTs)):
         Sj.insert(j,ListAllConfigTs[j][0])
         Uj0.insert(j,ListAllConfigTs[j][1])     
     """ Dét Uj, Delta"""
@@ -167,7 +178,7 @@ def FindConfigTs(Y,Ry,y,Di,Ti,alpha):
     ListTsDate=[]
     for x in Ry[Y.index(y)]:
         ListTsDate.append(Ti[Di.index(x)])  
-    DictConfigTs={y:max(ListTsDate)+alpha}
+    DictConfigTs={y:max(ListTsDate, default=0)+alpha}
     return ListTsDate,DictConfigTs
 #================================= FindStartDateTs() ===================================
 """
@@ -182,25 +193,10 @@ def FindStartDateTs(Sj,Uj0,Uj,beta):
     return Uj
 
 
-
-
-
 #=======================================================================================
 #=======================================================================================
 #=======================================================================================
 
 
 
-#=======================================================================================
-#                               Fonctions Principales
-#=======================================================================================
-"""
-Outputs of ECM: X,Y,Ry (Inputs) & N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
-"""
-def ECM(X,Y,Ry,alpha,beta,NbBuff):
-    Di=PrefetchTile(X,Ry)
-    Bi=DestinationTile(Di,NbBuff)
-    Z=len(Bi)
-    Ti=PrefetchStartDate(Di,alpha)
-    Sj,Uj,Delta=ComputeTile(Y,Ry,Di,Ti,alpha,beta) 
-    return Sj,N,Z,Di,Bi,Ti,Uj,Delta
+

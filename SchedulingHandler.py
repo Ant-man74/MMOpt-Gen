@@ -14,6 +14,7 @@ import sys
 #from google.apputils import app
 
 from ECM import *
+from CGM import *
 from XmlHandler import XmlHandler
 
 class SchedulingHandler:
@@ -35,7 +36,7 @@ class SchedulingHandler:
 	"""
 	Execute the ECM algorythm according to the parameters
 	"""
-	def executeECM(self,nbBuff):
+	def executeSchedule(self,nbBuff,algo):
 		StartTime=datetime.now()
 		#16 is the number of images to do (numer of file in /Kernel)
 		for k in range(16):
@@ -54,8 +55,10 @@ class SchedulingHandler:
 
 			#Step3: Apply Heuristic 1 - ECM
 			#print " ------ Outputs Data of ECM: ------"
-			
-	#	Sj1,N1,Z1,Di1,Bi1,Ti1,Uj1,Delta1=ECM(X,Y,Ry,self.alpha,self.beta,nbBuff)
+			if algo == "ECM":
+				Sj1,Z1,Di1,Bi1,Ti1,Uj1,Delta1,N=ECM(X,Y,Ry,self.alpha,self.beta,nbBuff)
+			elif algo == "CGM":
+				Sj1,Z1,Di1,Bi1,Ti1,Uj1,Delta1,N=CGM(X,Y,Ry,self.alpha,self.beta,nbBuff)
 			
 			#print "1- All Outputs-ECM are (N1,Z1,Delta1) with values = ", (N1,Z1,Delta1)
 			#Step0: Det DeltaMCT
@@ -64,55 +67,13 @@ class SchedulingHandler:
 			
 			#Step6: Det Ratio for ECM heuristic
 			
-	#	R1=float(Delta1)/float(DeltaMCT[k])
+			R1=float(Delta1)/float(DeltaMCT[k])
 			
 			#print "Ratio of ECM's Potential is: %.2f " % R1
 
 		EndTime = datetime.now()
 		#print('----- Duration of Execution -----:{} --- {} ===> {} '.format(StartTime, EndTime, EndTime-StartTime ))
-
-		return nbBuff, 5, EndTime-StartTime
-
-	"""
-	Execute the CGM algorythm according to the parameters
-	"""
-	def executeCGM(self,nbBuff):
-		StartTime=datetime.now()
-		#16 is the number of images to do (numer of file in /Kernel)
-		for k in range(16):
-			
-			Y,Ry = SchedulingHandler.extractTiles('test_4_',k)	
-			Xmin = SchedulingHandler.RequiredTileNb(Ry)
-			Xmax = SchedulingHandler.BuffersNb(Ry)
-			X = SchedulingHandler.InputTile(Ry)
-			Z = SchedulingHandler.BuffersNb(Ry)
-			
-			#Step2: Det All Bounds: lbZ, lbN & lbDelta
-			#print " ------ Lower Bounds of 3-PSDPP: ------"
-			lbN,lbZ,lb1Delta,lb2Delta,lb3Delta,lbDelta,lbDelta1 = SchedulingHandler.LowerBounds(X,Y,Ry,self.alpha,self.beta)
-			# print "0- Lower Bounds are (lbN,lbZ,lbDelta) with values = ", (lbN,lbZ,lbDelta)
-			#print "0- New Lower Bounds in Delta are (lb3Delta,lbDelta1) with values = ", (lb3Delta,lbDelta1)
-
-			#Step3: Apply Heuristic 1 - CGM
-			#print " ------ Outputs Data of CGM: ------"
-			
-	#	Sj1,N1,Z1,Di1,Bi1,Ti1,Uj1,Delta1=CGM(X,Y,Ry,self.alpha,self.beta,nbBuff)
-			
-			#print "1- All Outputs-CGM are (N1,Z1,Delta1) with values = ", (N1,Z1,Delta1)
-			#Step0: Det DeltaMCT
-			
-			DeltaMCT=[34,35,38,53,53,69,71,70,60,60,60,90,90,120,120,150]
-			
-			#Step6: Det Ratio for CGM heuristic
-			
-	#	R1=float(Delta1)/float(DeltaMCT[k])
-			
-			#print "Ratio of CGM's Potential is: %.2f " % R1
-
-		EndTime=datetime.now()
-		#print('----- Duration of Execution -----:{} --- {} ===> {} '.format(StartTime, EndTime, EndTime-StartTime ))
-
-		return nbBuff, 5, EndTime-StartTime
+		return nbBuff, N, EndTime-StartTime
 
 	"""
 	Extract the data from the file "filename" for the "k" file
@@ -139,10 +100,10 @@ class SchedulingHandler:
 		allBufferRange = []
 		for k in range(16):
 			Y,Ry = SchedulingHandler.extractTiles('test_4_',k)
-			Xmin = SchedulingHandler.RequiredTileNb(Ry)
-			Xmax = SchedulingHandler.BuffersNb(Ry)
-			allBufferRange.append([Xmin,Xmax])
-		return (np.amin(allBufferRange),np.amax(allBufferRange))
+			Zmin = SchedulingHandler.RequiredTileNb(Ry)
+			Zmax = SchedulingHandler.BuffersNb(Ry)
+			allBufferRange.append([Zmin,Zmax])
+		return (np.amin(allBufferRange)+1,np.amax(allBufferRange))
 
 	"""
 	Find X: the input tile list  <===> len(X)=lbN
