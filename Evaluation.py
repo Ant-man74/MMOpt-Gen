@@ -23,7 +23,8 @@ class Evaluation:
 	"""
 	def tournamentRound(self):
 
-		newPopulation = Population(True);
+		newPopulation = Population()
+
 		#-1 because we want to stay in range for the array
 		remaining = len(self.result)-1
 		indToAdd = 0

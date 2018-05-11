@@ -14,19 +14,16 @@ class Individual:
 	chromosome3 = None
 
 	fullChromosome = [chromosome1, chromosome2, chromosome3]
-	bufferLowerBound = None
-	bufferUpperBound = None
-
+	
 	"""
-	Init and pick chromosome randomly
+	Init and pick chromosome randomly or init a chromosome with a specific configuration if provided
 	"""
 	def __init__(self, chrom = None):
 		# Init
 		if chrom is None: 
-			zMin, zMax = SchedulingHandler.getBufferRange()
-			self.chromosome1 = random.randint(zMin,zMax) # Number of buffer 		
-			self.chromosome2 = random.randint(1,2) # Method to use (ECM or CGM)
-			
+			#needs to be moved to a better spot because we call him each time we create a dude despite it not moving for the whole algo
+			self.chromosome1 = Individual.genAGene(1)# Number of buffer 		
+			self.chromosome2 = Individual.genAGene(2) # Method to use (ECM or CGM)			
 			self.fullChromosome = [self.chromosome1,self.chromosome2,self.chromosome3]
 		else:
 			self.chromosome1 = chrom[0]
@@ -49,6 +46,29 @@ class Individual:
 		self.fullChromosome = [self.chromosome1,self.chromosome2,self.chromosome3]
 
 	"""
+	mutate a gene on a chromosome
+	"""
+	def mutate(self):
+		mutate = random.randint(1,100)
+		if mutate <= self.mutationRate:
+			#select a random gene and plug in a new value
+			geneSelect = random.randint(0,len(fullChromosome)-1)
+			fullChromosome[geneSelect] = random.randint(1,5)
+		return fullChromosome
+	
+	"""
+	generate a value for the a chromosome, contain the method of generation for each chromosome
+	"""
+	@staticmethod
+	def genAGene(x):
+		ret = None
+		if x is 1:
+			ret = random.randint(zMin,zMax)
+		elif x is 2:
+			ret = random.randint(1,2) 
+		return ret
+
+	"""
 	Display the chromosome of the Individual
 	"""
 	def __str__(self):
@@ -69,5 +89,3 @@ class Individual:
 			csvStr = csvStr + "Chromosome " + str(x) + ","
 			pass
 		return csvStr + "\n"
-
-	

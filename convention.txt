@@ -5,3 +5,7 @@ Coding convention
 	--> no line break before pass
 	--> for conditional statement longer than one line, linebreak after conditional statement condition
 - CamelCase variable
+- Space after a comma
+- space after and before equal
+- """ comment """ only for documentation
+- #comment only for annotation inside code

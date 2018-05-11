@@ -17,8 +17,9 @@ class Reproduction:
 		self.population = popToRepro
 		print
 	
-	# ToDo should be scalable for more chromosome + refactoring
-	#Also this is quite a bad method as it's not how a point crossoer should be done but it's equivalent for the time being
+	"""
+	Clean one point cut reproduction of chromosome, scalable for as much gene as we want
+	"""
 	def reproducePop(self):
 		# only mate 80% of the pop
 		for x in range(0,int(round((len(self.population.currentPopulation)*40)/100))):
@@ -34,61 +35,34 @@ class Reproduction:
 			matingIndividual1 = self.population.currentPopulation[id1]
 			matingIndividual2 = self.population.currentPopulation[id2]			
 
-			# select how many in the 3 gene will be shuffled (1 or 2) 
-			geneShuffle = random.randint(1,2)
+			# select a point at which the individual chromosome is going to be cut
+			geneCutPoint = random.randint(1,len(matingIndividual1))
 
 			# extract chromosome
 			fullChromosome1 =  matingIndividual1.getFullChromosome()
 			fullChromosome2 =  matingIndividual2.getFullChromosome()
 
-			if geneShuffle == 1:
-				# select which gene to shuffle
-				geneSelect = random.randint(0,len(fullChromosome1)-1)
-				# shuffle
-				oldGene = fullChromosome1[geneSelect]
-				fullChromosome1[geneSelect] = fullChromosome2[geneSelect]
-				fullChromosome2[geneSelect] = oldGene
 
-			elif geneShuffle == 2:
-				
-				# select which gene to shuffle
-				geneSelect1 = 0
-				geneSelect2 = 0				
-				while geneSelect1 == geneSelect2:
-					geneSelect1 = random.randint(0,len(fullChromosome1)-1)
-					geneSelect2 = random.randint(0,len(fullChromosome1)-1)
-					pass
-				
-				# shuffle
-				oldGene1 = fullChromosome1[geneSelect1]
-				fullChromosome1[geneSelect1] = fullChromosome2[geneSelect1]
-				fullChromosome2[geneSelect1] = oldGene1
+			chromosome1Begin = fullChromosome1[:geneCutPoint]
+			chromosome1End = fullChromosome1[-geneCutPoint:]
 
-				oldGene2 = fullChromosome1[geneSelect2]
-				fullChromosome1[geneSelect2] = fullChromosome2[geneSelect2]
-				fullChromosome2[geneSelect2] = oldGene2
+			chromosome2Begin = fullChromosome2[:geneCutPoint]
+			chromosome2End = fullChromosome2[-geneCutPoint:]
+
+			newChromosome1 = chromosome1Begin + chromosome2End
+			newChromosome2 = chromosome2Begin + chromosome1End
 
 			# chance to mutate each individual
-			fullChromosome1 = self.mutateIndividual(fullChromosome1)
-			fullChromosome2 = self.mutateIndividual(fullChromosome2)
+			newChromosome1 = self.mutateIndividual(newChromosome1)
+			newChromosome2 = self.mutateIndividual(newChromosome2)
 
-			# should I add or replace them? replacement problem to discuss?
 			# replace parent in population
-			self.population.currentPopulation[id1].updateIndividual(fullChromosome1)
-			self.population.currentPopulation[id1].updateIndividual(fullChromosome2)
+			self.population.currentPopulation[id1].updateIndividual(newChromosome1)
+			self.population.currentPopulation[id2].updateIndividual(newChromosome2)
 
-			return self.population
+			self.population.currentPopulation[id1].mutate()
+			self.population.currentPopulation[id2].mutate()
+
 			pass
-
-
-	def mutateIndividual(self, fullChromosome):
-		
-		mutate = random.randint(1,100)
-		if mutate <= self.mutationRate:
-			#select a random gene and plug in a new value
-			geneSelect = random.randint(0,len(fullChromosome)-1)
-			fullChromosome[geneSelect] = random.randint(1,5)
-		return fullChromosome
-
-
-
+		return self.population
+			

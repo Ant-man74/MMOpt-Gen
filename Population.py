@@ -6,38 +6,55 @@ import random
 
 class Population:
 
+	popSizeToGenerate = None
 	currentPopulation = []
-	popSize = None
+	popSize = 0
 
-	def __init__ (self, alt = None):
-		if alt is None:
-			xmlHandler = XmlHandler()
-			self.popSize = int(xmlHandler.getItemFrom("algoGen","popSize"))
-		elif alt is True:
-			self.currentPopulation = []
-			self.popSize = 0
+	def __init__ (self):
+		xmlHandler = XmlHandler()
+		self.popSizeToGenerate = int(xmlHandler.getItemFrom("algoGen","popSize"))
+		self.popSize = 0
+		self.currentPopulation = []
+		
 	
+	""" 
+	Generate apopulation if the length specified in the xml file
+	"""
 	def generatePop(self):
-
-		for x in range(0,int(self.popSize)):
+		
+		for x in range(0,int(self.popSizeToGenerate)):
 			newIndividual = Individual()
 			self.currentPopulation.append(newIndividual)			
 			pass
+
+		self.popSize = len(self.currentPopulation)
 		return self
 
+	""" 
+	Return the current population for this object
+	"""
 	def getPopulation(self):
 		return self.currentPopulation
 
+	"""
+	Add an individual to the current population
+	"""
 	def addIndividual(self, individual):
 		self.currentPopulation.append(individual)
 		self.popSize += 1
 
+	"""
+	Generate X new individual and put them in the current population
+	"""
 	def addXNewIndividual(self, x):
 		for x in range(0,x):
 			newIndividual = Individual()
 			self.currentPopulation.append(newIndividual)
 			pass
 
+	"""
+	Reset the object to it's blank state
+	"""
 	def cleanUp(self):
 		self.currentPopulation = []
 		self.popSize = 0

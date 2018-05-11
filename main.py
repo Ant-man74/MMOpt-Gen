@@ -11,10 +11,10 @@ import copy
 def main():
 	
 	#variable
-	firstPop = []
-	lastPop = []
 	firstEvaluator = []
 	lastEvaluator = []
+	global zMin
+	global zMax
 
 	# Handle config
 	xmlHandler = XmlHandler()
@@ -22,15 +22,16 @@ def main():
 	maxTour = xmlHandler.getItemFrom("algoGen","maxTour")
 
 	# Initialize scheduler
-	scheduler = SchedulingHandler()
-	
+	scheduler = SchedulingHandler()	
+	zMin, zMax = SchedulingHandler.getBufferRange()
+
 	# Generate Population
 	pop = Population()
 	pop.generatePop()
 
 	# Run a number of iteration
 	for x in range(0,int(maxTour)):
-		
+		print(pop)
 		result = []
 
 		# Test the currentPop to get the result of each Individual

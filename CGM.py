@@ -10,11 +10,6 @@ import numpy as np
 import operator 
 import random
 
-#=======================================================================================
-#=======================================================================================
-#=======================================================================================
-
-
 #======================================= Phase 1 =======================================
 """
 Phase1: Find Sj0
@@ -23,32 +18,31 @@ Phase1: Find Sj0
      Step3:
 """
 
-#=======================================================================================
-#                               Fonctions Principales
-#=======================================================================================
+
 """
 Outputs of CGM: N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
 """
 def CGM(X,Y,Ry,alpha,beta,Z):
-    Sj0,Sj0Ry,GroupSj0=ComputeSequence0(Y,Ry)    
-    Di0=[Sj0Ry[0]]
-    Di0, N=PrefetchTile(Sj0,Sj0Ry,Di0)
-    Di=reduce(lambda x,y:x+y,Di0)
-    Bi=DestinationTile(Di,Z)
-    Sj=ComputeSequence(Y,Ry,Sj0,Sj0Ry,GroupSj0)
-    Ti0,Uj1,Delta1=StartDateTile0(Y,Ry,Di0,alpha,beta,Sj0,GroupSj0)
-    Ti1=reduce(lambda x,y:x+y,Ti0)
-    Ti,Uj,Delta=StartDateTile(Y,Ry,Sj,Di,Ti1,Uj1,alpha,beta)                 
-    return Sj,Z,Di,Bi,Ti,Uj,Delta,N
+    Sj0, Sj0Ry, GroupSj0 = ComputeSequence0(Y, Ry)    
+    Di0 = [Sj0Ry[0]]
+    Di0 = PrefetchTile(Sj0, Sj0Ry, Di0)
+    Di = reduce(lambda x, y:x+y, Di0)
+    N = len(Di)
+    Bi = DestinationTile(Di, Z)
+    Sj = ComputeSequence(Y, Ry, Sj0, Sj0Ry, GroupSj0)
+    Ti0, Uj1, Delta1 =StartDateTile0(Y, Ry, Di0, alpha, beta, Sj0, GroupSj0)
+    Ti1 = reduce(lambda x, y:x+y, Ti0)
+    Ti, Uj, Delta = StartDateTile(Y, Ry, Sj, Di, Ti1, Uj1, alpha, beta)                 
+    return Sj,Uj,Di,Bi,Ti,Z,N,Delta
 
 
 #=======================================================================================
 #================================== ComputeSequence0() =================================
-def ComputeSequence0(Y,Ry):
-    OrdoY=ComputeTile1(Y,Ry)
-    NewY,GroupY=FindNewGroupY(Y,Ry,OrdoY)
-    Sj0,GroupSj0=ComputeTile2(Y,Ry,NewY,GroupY)
-    Sj0Ry=FindConfigSj0(Y,Ry,Sj0)
+def ComputeSequence0(Y, Ry):
+    OrdoY = ComputeTile1(Y, Ry)
+    NewY,GroupY = FindNewGroupY(Y, Ry, OrdoY)
+    Sj0,GroupSj0 = ComputeTile2(Y, Ry,NewY, GroupY)
+    Sj0Ry = FindConfigSj0(Y, Ry, Sj0)
     return Sj0,Sj0Ry,GroupSj0
 
 
@@ -58,38 +52,43 @@ def ComputeSequence0(Y,Ry):
 Det OrdoY: Y ordonnée ds l'ordre décroissant en fct |Ry|
 """ 
 def ComputeTile1(Y,Ry):
-    DictTile1=FindDictTile1(Y,Ry)
-    OrdoY=[]
-    ListDictTile1=sorted(DictTile1.items(),key=lambda x:len(list(x[1])),reverse=True)
+    DictTile1 = FindDictTile1(Y,Ry)
+    OrdoY = []
+    ListDictTile1 = sorted(DictTile1.items(), key = lambda x:len(list(x[1])), reverse=True)
+
     for j in range(len(ListDictTile1)):
         OrdoY.insert(j,ListDictTile1[j][0])
+
     return OrdoY
-#=================================== FindDictTile1() ===================================
+
 """
 Det DictTile1: un dictionnaire a partir de 2 listes as inputs
 """ 
 def FindDictTile1(Y,Ry):
-    DictTile1={}
+    DictTile1 = {}
+
     for j in range(len(Y)):
         DictTile1.update({Y[j]:Ry[j]})
+
     return DictTile1
 
-
-#=======================================================================================
-#============================ FindNewGroupY(Y,Ry,OrdoY) ================================
 """
 Det NewY,GroupY: 
 """
 def FindNewGroupY(Y,Ry,OrdoY):
-    DictGroupG0=FindGroupG(Y,Ry,OrdoY,OrdoY[0])
-    NewY=[list(DictGroupG0.keys())[0]]
-    GroupY=[list(DictGroupG0.values())[0]]
+    DictGroupG0 = FindGroupG(Y, Ry, OrdoY, OrdoY[0])
+    NewY = [list(DictGroupG0.keys())[0]]
+    GroupY = [list(DictGroupG0.values())[0]]
+    
     for j in range(1,len(OrdoY)):
-        if OrdoY[j] not in NewY+reduce(lambda x,y:x+y,GroupY):#(OrdoY[j] not in NewY) and (OrdoY[j] not in reduce(lambda x,y:x+y,GroupY)):
-            DictGroupG=FindGroupG(Y,Ry,OrdoY,OrdoY[j])
+        
+        if OrdoY[j] not in NewY+reduce(lambda x, y:x+y, GroupY):#(OrdoY[j] not in NewY) and (OrdoY[j] not in reduce(lambda x,y:x+y,GroupY)):
+            DictGroupG = FindGroupG(Y, Ry, OrdoY, OrdoY[j])
         else: continue
+        
         NewY.append(DictGroupG.keys()[0])
-        GroupY.append(list(set(DictGroupG.values()[0])-set(reduce(lambda x,y:x+y,GroupY))))        
+        GroupY.append(list(set(DictGroupG.values()[0])-set(reduce(lambda x, y:x+y, GroupY))))        
+   
     return NewY,GroupY
 #===================================== FindGroupG() ====================================
 """
