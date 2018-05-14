@@ -25,8 +25,7 @@ cleanGen: ## Clean the geneticAlgo package
 
 install: ## Install dependency
 	sudo apt-get install python3-lxml
-	sudo apt-get install python3-pip
-	python -m pip install --user numpy scipy
+	sudo apt-get install python-numpy python-scipy 
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
