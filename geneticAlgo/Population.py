@@ -11,8 +11,7 @@ class Population:
 	popSize = 0
 
 	def __init__ (self):
-		xmlHandler = XmlHandler()
-		self.popSizeToGenerate = int(xmlHandler.getItemFrom("algoGen","popSize"))
+		self.popSizeToGenerate = int(XmlHandler.getItemFrom("algoGen","popSize"))
 		self.popSize = 0
 		self.currentPopulation = []
 		
@@ -50,8 +49,9 @@ class Population:
 		for x in range(0,x):
 			newIndividual = Individual()
 			self.currentPopulation.append(newIndividual)
+			self.popSize  = self.popSize + 1
 			pass
-
+			
 	"""
 	Reset the object to it's blank state
 	"""
@@ -62,8 +62,7 @@ class Population:
 	"""
 	Display the chromosome of the Individual
 	"""
-	def __str__(self):
-		
+	def __str__(self):		
 		strRet = "[";
 		for x in range(0,len(self.currentPopulation)-1):
 			strRet = strRet + str(self.currentPopulation[x]) + "\n"

@@ -48,16 +48,14 @@ class SchedulingHandler:
 	Retrieve parameters for the execution of the ECM and CGM algorithm
 	"""
 	def initParam(self):
-		xmlHandler = XmlHandler()
-		self.alpha = int(xmlHandler.getItemFrom("mmopt","alpha"))
-		self.beta = int(xmlHandler.getItemFrom("mmopt","beta"))
+		self.alpha = int(XmlHandler.getItemFrom("mmopt","alpha"))
+		self.beta = int(XmlHandler.getItemFrom("mmopt","beta"))
 
 	"""
 	Execute the ECM algorythm according to the parameters
 	"""
 	def executeSchedule(self,iterZ,algo):
 		StartTime=datetime.now()			
-		sys.exit()
 
 		#16 is the number of images to do (numer of file in /Kernel)
 		for k in range(16):

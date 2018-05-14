@@ -11,9 +11,8 @@ class Reproduction:
 	population = None
 
 	def __init__(self, popToRepro):
-		xmlHandler = XmlHandler()
-		self.mutationRate = int(xmlHandler.getItemFrom("algoGen","mutationRate"))
-		self.crossOverRate = int(xmlHandler.getItemFrom("algoGen","crossOverRate"))
+		self.mutationRate = int(XmlHandler.getItemFrom("algoGen","mutationRate"))
+		self.crossOverRate = int(XmlHandler.getItemFrom("algoGen","crossOverRate"))
 		self.population = popToRepro
 		print
 	

@@ -15,24 +15,21 @@ class XmlHandler:
 	"""
 	Entry method for the xml config handler
 	"""
-	@staticmethod
-	def loadConfig():
-		XmlHandler.initConfigFile()
-		XmlHandler.parseConfig()
+	def __init__ (self):
+		self.initConfigFile()
+		self.parseConfig()
 
 	"""
 	Retrieve the Xml tree of the config file
 	"""
-	@staticmethod
-	def initConfigFile():
-		XmlHandler.treeConfig = etree.parse(os.getcwd()+"/geneticAlgo/config.xml")
+	def initConfigFile(self):
+		XmlHandler.treeConfig = etree.parse(os.path.dirname(os.path.abspath(__file__))+"/config.xml")
 
 	"""
 	Parse the xml tree of the config file
 	"""
-	@staticmethod
-	def parseConfig():
-		for categories in XmlHandler.treeConfig.iter('paramsList'):
+	def parseConfig(self):
+		for categories in self.treeConfig.iter('paramsList'):
 			id = categories.get("id")
 			for param in categories.iter('param'):
 				if( id == "algoGen" ) :

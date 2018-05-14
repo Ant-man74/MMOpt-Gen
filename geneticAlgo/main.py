@@ -18,8 +18,6 @@ def main():
 
 	# Handle config
 	xmlHandler = XmlHandler()
-	xmlHandler.loadConfig()
-	maxTour = xmlHandler.getItemFrom("algoGen","maxTour")
 
 	# Initialize scheduler
 	scheduler = SchedulingHandler()	
@@ -28,9 +26,10 @@ def main():
 	pop = Population()
 	pop.generatePop()
 
+	maxTour = XmlHandler.getItemFrom("algoGen","maxTour")
+
 	# Run a number of iteration
 	for x in range(0,int(maxTour)):
-		print(pop)
 		result = []
 
 		# Test the currentPop to get the result of each Individual

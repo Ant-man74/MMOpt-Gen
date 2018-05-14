@@ -1,0 +1,42 @@
+<algoConfig>
+	<!-- Genetic algorythm parameters -->
+	<paramsList id="algoGen">
+		
+		<param>
+			<name>popSize</name>
+			<value>50</value>
+		</param>
+		<param>
+			<name>mutationRate</name>
+			<value>2</value>
+		</param>
+		<param>
+			<name>crossOverRate</name>
+			<value>1</value>
+		</param>
+		<param>
+			<name>reproductionRate</name>
+			<value>80</value>
+		</param>
+		<param>
+			<name>selectionMethod</name>
+			<value>2</value>
+		</param>
+		<param>
+			<name>maxTour</name>
+			<value>100</value>
+		</param>
+	</paramsList>
+	
+	<!-- mmopt parameters -->
+	<paramsList id="mmopt">
+		<param>
+			<name>alpha</name>
+			<value>1</value>
+		</param>
+		<param>
+			<name>beta</name>
+			<value>1</value>
+		</param>
+	</paramsList>
+</algoConfig>
