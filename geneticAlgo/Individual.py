@@ -61,6 +61,7 @@ class Individual:
 	"""
 	@staticmethod
 	def genAGene(x):
+		zMin, zMax = SchedulingHandler.getBufferRange()
 		ret = None
 		if x is 1:
 			ret = random.randint(zMin,zMax)

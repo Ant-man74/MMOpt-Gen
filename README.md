@@ -1,17 +1,33 @@
 # MMOpt-Gen
+
 Multi objective genetic algorythm to solve the MMOpt problem
 
 Genetic algorythm to optimize the 3-MMOPT problem
 
-## Instruction
+## Dependency
+
+To install all dependency needed to run the lagorythm use:
+
+    make install
+
+## Other Command
+
+To view what option you can use:
+
+    make help
+
+
 To launch the optimization algorythm use:
 
-    python3 main.py
+    make main
   
- ## Dependency
- Lxml pour le traitement de données xml
+To launch the test and if the test pass the optimization algorythm use:
 
-    sudo apt-get install python3-lxml
-    
-Numpy pour traitement de matrice
+    make all
+
+To clean the whole repository or a specific repository use
+
+    make clean
+    make cleanTest
+    make cleanGen
 

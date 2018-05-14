@@ -1,4 +1,6 @@
 
+import os
+
 from lxml import etree
 
 class XmlHandler:
@@ -23,7 +25,7 @@ class XmlHandler:
 	"""
 	@staticmethod
 	def initConfigFile():
-		XmlHandler.treeConfig = etree.parse("config.xml")
+		XmlHandler.treeConfig = etree.parse(os.getcwd()+"/geneticAlgo/config.xml")
 
 	"""
 	Parse the xml tree of the config file

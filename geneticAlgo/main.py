@@ -23,7 +23,6 @@ def main():
 
 	# Initialize scheduler
 	scheduler = SchedulingHandler()	
-	zMin, zMax = SchedulingHandler.getBufferRange()
 
 	# Generate Population
 	pop = Population()

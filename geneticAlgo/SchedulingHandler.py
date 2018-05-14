@@ -3,6 +3,7 @@ import numpy as np
 import random
 from datetime import datetime
 import sys
+import os
 
 from ECM import *
 from CGM import *
@@ -99,8 +100,8 @@ class SchedulingHandler:
 	"""
 	@staticmethod
 	def extractTiles(filename, k):
-		#Step1: Det Y,Ry,X à partir de test_4_k.txt	
-		Matrix0 = open('Kernels/'+filename+'{}.txt'.format(k), 'r')     
+		#get Y Ry from Kernel
+		Matrix0 = open(os.getcwd()+'/Kernels/'+filename+'{}.txt'.format(k), 'r')     
 		List0 = Matrix0.readlines()
 		Matrix0.close()
 		#the number of the output tile
