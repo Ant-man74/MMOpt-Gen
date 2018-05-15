@@ -1,5 +1,7 @@
 language: python
 python:
   - "3.6"
+install:
+  - make installTravis
 script:
   - python -m pytest test/
