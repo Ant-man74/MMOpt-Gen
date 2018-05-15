@@ -5,9 +5,9 @@ from datetime import datetime
 import sys
 import os
 
-from ECM import *
-from CGM import *
-from XmlHandler import XmlHandler
+from .ECM import *
+from .CGM import *
+from .XmlHandler import XmlHandler
 
 """
 	Handle the Scheduling for the 3-MMOPT problem

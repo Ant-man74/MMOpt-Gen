@@ -1,0 +1,250 @@
+
+#=======================================================================================
+#=======================================================================================
+#=======================================================================================
+
+
+
+
+
+#=======================================================================================
+#                       3: Optimiser Z ? ---> Idea 1
+#=======================================================================================
+"""
+Use the same idea as KTNS algorithm to find a Destination sequence    
+    Step10: Dét A: matrice d'incidence Te/Ts, où
+               ---> Te ds l'ordre celui de Di
+               ---> Ts ds l'ordre celui de Sj
+               
+    Step11: Dét Bi: affecter chaque bloc 1 de A à un buffer, où nb initial de buff est =Z
+               ---> Z=BuffersNb(Ry)
+"""
+
+#=======================================================================================
+#================================ FindIncidenceMatrix() ================================
+"""
+Dét A: incidence matrix (0-1) of Te/Ts using Di & Sj
+"""
+def FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta):
+    A=np.zeros((len(Di),len(Sj)),dtype=int)
+    for i in xrange(len(Di)):
+        DictConfigTe=FindConfigTe(Di,Ti,Di[i],Sj,Uj,Y,Ry,beta)
+        Tile1=DictConfigTe.values()[0][0]
+        Tile2=DictConfigTe.values()[0][1]
+        for j in xrange(Sj.index(Tile1),Sj.index(Tile2)+1):
+            A[i][j]=1
+    return A
+#=================================== FindConfigTe() ====================================
+"""
+Dét DictConfigTe, où
+    - key= x   ---> N° of Te in Di
+    - Value= (First Computation, Last Computation)
+"""
+def FindConfigTe(Di,Ti,x,Sj,Uj,Y,Ry,beta):
+    ListTs=FindListTs(Y,Ry,x)
+    ListTsDate=FindListTsDate(ListTs,Sj,Uj)        
+    DictConfigTe={x:(Sj[Uj.index(min(ListTsDate))],Sj[Uj.index(max(ListTsDate))])}
+    return DictConfigTe
+#================================== FindListTs() =======================================
+"""
+Dét ListTs: la liste de Ts où la tuile Te donnée (x) est ds Ry
+"""
+def FindListTs(Y,Ry,x):
+    ListTs=[]
+    for j in range(len(Ry)):
+        if x in Ry[j]:
+            ListTs.append(Y[j])
+    return ListTs
+#================================ FindListTsDate() =====================================
+"""
+Dét ListTsDate: la liste de Start Date de la ListTs pour la Te x 
+"""
+def FindListTsDate(ListTs,Sj,Uj):
+    ListTsDate=[]
+    for Ts in ListTs:
+        ListTsDate.append(Uj[Sj.index(Ts)])
+    return ListTsDate
+
+
+#=======================================================================================
+#================================= FindBufferNumber() ==================================
+"""
+Dét Z: Nb d Buffers correspondant à la matrice A
+"""
+def FindBufferNumber(A):
+    (x,y)=shape(A)
+    ListBuff=[]
+    for j in xrange(len(A[0])):
+        ListBuff.append(ColumnCapacity(A,j))
+    Z=max(ListBuff)
+    return Z
+
+#================================== ColumnCapacity() ===================================
+def ColumnCapacity(A,j):
+    """
+    Determiner la valeur qui calcule la somme de 1 de la colonne j de la matrice A
+    """
+    return sum(A[:,j])
+
+#=======================================================================================
+#================================== DestinationTile() ==================================
+"""
+Dét Bi: Destination de tuiles préchargées (Quel Buffer pour Quelle Tuile)
+---> (Bi est une liste de listes)
+"""
+def DestinationTile(A,Z):
+    Bi=[]
+    ListFreeBuff=list(range(Z))
+    DicAffectBuffAllBloc1={}
+    ListFreeBuff,DicAffectBuffAllBloc1,D=FindAllListBuff(A,ListFreeBuff,DicAffectBuffAllBloc1,Bi)    
+    return Bi
+#====================================== FindBloc1() ====================================
+"""
+On prend la matrice A
+On retourne une liste contient les indices i correspondants aux blocs de 1
+(x=len(A[:,0]) & y=len(A[0,:]))
+On peut aussi retourner un 3 tuples (Di, Bi, Ti)
+<--->(Quelle Tuile x, Quelle Buffer z, à Quelle Dtae) avec Z et alpha comme données
+"""
+def FindBloc1(A,j):
+    (x,y)=shape(A)
+    DicBloc1={}
+    for i in range(0,x):
+        if A[i][j] == 0: continue
+        if j == 0:
+            if A[i][j] == 1 and A[i][j+1] == 0:
+                DicBloc1 [i] = (j,j)
+            else:
+                """ On compte les 1 jusqu'à trouver un 0 (On regarde ts les j aprés où A[i][j]= A[i][j+k]= 1) """
+                k = 1
+                while k<y and A[i][j+k] == 1:#j=0 ==> j+k<y
+                    k += 1                
+                DicBloc1 [i] = (j, j+k-1)
+        elif j == y-1:
+            if A[i][j-1]== 1: continue
+            DicBloc1 [i] = (j, j)        
+        else:
+            """
+                Si 0 < j < y-1: 
+                    1: A[i][j-1] == 0
+                    2: Pour ts les j colonnes aprés: A[i][j]== A[i][j+k] == 1
+            """        
+            if A[i][j-1]== 1: continue
+            k = 1
+            while j+k < y and A[i][j+k] ==  1:
+                k += 1
+            DicBloc1[i]=(j,j+k-1)
+    return DicBloc1
+#=================================== FindAllListBuff() =================================
+"""
+Dét ListFreeBuff,DicAffectBuffAllBloc1,Bi: destination pour tte colonne j de A
+"""
+def FindAllListBuff(A,ListFreeBuff,DicAffectBuffAllBloc1,Bi):
+    for j in range(len(A[0])):
+        
+        """ Step0: Initialize """       
+        DicAffectBuff={}
+        ListAffectBuff=[]
+        ListToFreeBuff=[]
+        
+        """ Step1: Affect Buff """
+        DicAffectBuff,ListAffectBuff,ListFreeBuff=FindListBuff(A,j,ListFreeBuff)
+        
+        """ Step2: Buff To Free """
+        DicAffectBuffAllBloc1.update(DicAffectBuff)
+        ListToFreeBuff=FreeBuffer(j,DicAffectBuffAllBloc1)
+        
+        """ Step3: Update ListFreeBuff """
+        ListFreeBuff.extend(ListToFreeBuff)
+        
+        """ Step4: Bi List """
+        Bi.insert(j,ListAffectBuff)
+        
+    return ListFreeBuff,DicAffectBuffAllBloc1,Bi
+#==================================== FindListBuff() ===================================
+"""
+Dét D1,L1,L: la liste ListAffectBuff pour une colonne j 
+"""
+def FindListBuff(A,j,L):
+    ListBloc1=list((FindBloc1(A,j)).items())
+    D={}#one bloc1=one buffer
+    D1={}#dic Affect Buff of all bloc1 of j
+    L1=[]#list Affect Buff of all bloc1 of j
+    for list1 in ListBloc1:
+        D=AffectBuffer(list1,L)
+        for valeur in D.values():
+            L.remove(valeur)
+        D1.update(D)
+        L1.extend(D.values())
+    return D1,L1,L
+#==================================== AffectBuffer() ===================================
+"""
+Dét pour un bloc1 quel buffer libre à affecter
+(Affecter 1 Buffer à un Bloc de 1)
+"""
+def AffectBuffer(Bloc1,L):
+    NumRow,FirstCol,LastCol,k=Bloc1Details(Bloc1)
+    D={(NumRow,FirstCol,LastCol):random.choice(L)}
+    return D
+#==================================== Bloc1Details() ===================================
+"""
+Dét NumRow,FirstCol,LastCol,k(=LenBloc1): les détails d'un bloc1
+"""
+def Bloc1Details(L):
+    for i in range(len(L)):
+        NumRow=L[0]
+        FirstCol=L[1][0]
+        LastCol=L[1][1]
+        k=LastCol-FirstCol+1
+    return NumRow,FirstCol,LastCol,k
+#===================================== FreeBuffer() ====================================
+"""
+Dét L: la liste de Buff a liberer
+"""
+def FreeBuffer(j,D1):
+    L=[]
+    for key,value in D1.items():
+        if key[2] == j:#-1:
+            L.append(value)
+    return L
+
+
+
+
+
+#=======================================================================================
+#=======================================================================================
+#=======================================================================================
+
+
+
+
+
+#=======================================================================================
+#                               Fonctions Principales
+#=======================================================================================
+"""
+EECM: X,Y,Ry (as Inputs) & Di,Bi,Ti,N,Z,Sj,Uj,Delta (as Outputs)
+"""
+(X,Y,Ry)=InputsData()
+
+def EECM(X,Y,Ry,alpha,beta):
+    """ Phase 1: ECM outputs <---> Sj,N,Z0,Di,Bi0,Ti,Uj,Delta """
+    Sj0,Sj0Ry,GroupSj0=ComputeSequence0(Y,Ry)    
+    Di0=[Sj0Ry[0]]
+    Di0=PrefetchTile(Sj0,Sj0Ry,Di0)
+    Di=reduce(lambda x,y:x+y,Di0)
+    N=len(Di)
+    Z0=N
+    Bi0=DestinationTile0(Di0,Z0)
+    Sj=ComputeSequence(Y,Ry,Sj0,Sj0Ry,GroupSj0)
+    Ti0,Uj1,Delta1=StartDateTile0(Y,Ry,Di0,alpha,beta,Sj0,GroupSj0)
+    Ti1=reduce(lambda x,y:x+y,Ti0)
+    Ti,Uj,Delta=StartDateTile(Y,Ry,Sj,Di,Ti1,Uj1,alpha,beta)
+    
+    """ Phase 2: min Z (based on KTNS's Idea) """    
+    A=FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta)
+    Z=FindBufferNumber(A)
+    Bi=reduce(lambda x,y:x+y,DestinationTile(A,Z))
+    
+    return Di,Bi,Ti,N,Z0,Z,Sj,Uj,Delta

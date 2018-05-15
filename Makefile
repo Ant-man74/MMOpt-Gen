@@ -7,7 +7,7 @@ pytest: ## Launch pytest and all unit test that it can find
 	pytest
 
 main: ## Execute the main genetic algorythm
-	$(CC) geneticAlgo/main.py
+	$(CC) main.py
 
 clean: ## Clean the whole project
 	rm -rf geneticAlgo/__pycache__

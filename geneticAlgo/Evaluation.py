@@ -1,7 +1,7 @@
 
 import numpy as np
-from Population import Population
-from Individual import Individual
+from .Population import Population
+from .Individual import Individual
 
 import random
 

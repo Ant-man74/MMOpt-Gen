@@ -1,6 +1,6 @@
 
-from XmlHandler import XmlHandler
-from Individual import Individual
+from .XmlHandler import XmlHandler
+from .Individual import Individual
 
 import random
 

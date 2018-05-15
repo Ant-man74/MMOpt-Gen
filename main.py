@@ -1,9 +1,9 @@
 
-from Evaluation import Evaluation
-from Population import Population
-from Reproduction import Reproduction
-from SchedulingHandler import SchedulingHandler
-from XmlHandler import XmlHandler
+from geneticAlgo.Evaluation import Evaluation
+from geneticAlgo.Population import Population
+from geneticAlgo.Reproduction import Reproduction
+from geneticAlgo.SchedulingHandler import SchedulingHandler
+from geneticAlgo.XmlHandler import XmlHandler
 
 import sys
 import copy
