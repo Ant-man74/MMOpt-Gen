@@ -153,7 +153,7 @@ class SchedulingHandler:
 			ListTile.append(len(Ry[i]))
 		
 		Zmin = max(ListTile)
-		return Zmin
+		return Zmin+1
 
 	"""
 	Find Z: the maximum number of buffer for a set of tile equal to the number of total prefetch

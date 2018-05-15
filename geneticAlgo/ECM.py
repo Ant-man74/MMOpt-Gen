@@ -9,7 +9,7 @@ import math
 import random
 import logging
 import operator 
-
+import sys
 
 #======================================= Phase 1 =======================================
 """
@@ -26,6 +26,8 @@ Outputs of ECM: X,Y,Ry (Inputs) & N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
 """
 def ECM(X,Y,Ry,alpha,beta,Z):
     Di = PrefetchTile(X,Ry)
+    print(Di)
+    sys.exit(0)
     N = len(Di)
     Bi = DestinationTile(Di,Z)
     Ti = PrefetchStartDate(Di,alpha)
@@ -54,7 +56,7 @@ buffers Z autant  X' (len(Di)
 def DestinationTile(Di,Z):
     Bi = []
     listBuff = list(range(Z))
-
+   
     for i in range(len(Di)):
         NbBuff,listBuff = AffectBuffer(Di,i,listBuff)
         Bi.insert(i,NbBuff)  
@@ -125,7 +127,7 @@ Dét le N° de Buffer (NbBuff) affecté aléatoirement à partir de la liste ini
 ListBuff à une Te i & MAJ de ListBuff (on supprime NbBuff de ListBuff) 
 """
 def AffectBuffer(Di,i,listBuff):
-    print (listBuff)
+    #print (listBuff)
     NbBuff = random.choice(listBuff)
     listBuff.remove(NbBuff)
     return NbBuff,listBuff

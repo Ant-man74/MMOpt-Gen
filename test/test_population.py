@@ -3,8 +3,6 @@ from geneticAlgo.Population import Population
 from geneticAlgo.XmlHandler import XmlHandler
 from geneticAlgo.Individual import Individual
 
-
-
 def setup_function(function):
    xmlHandler = XmlHandler()
 
