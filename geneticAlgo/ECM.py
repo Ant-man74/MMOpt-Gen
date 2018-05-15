@@ -43,7 +43,7 @@ def PrefetchTile(X,Ry):
     DictX = FindDictX(X,Ry)
     """ 2: Trier DicX ds Ordre Decroissant en fonct de DictX.Values() """
     ListDictX = sorted(DictX.items(),key=lambda x:x[1], reverse=True)
-
+    print(ListDictX)
     for i in range(len(ListDictX)):
         Di.insert(i,ListDictX[i][0])
 
