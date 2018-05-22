@@ -6,17 +6,17 @@ from geneticAlgo.SchedulingHandler import SchedulingHandler
 from geneticAlgo.XmlHandler import XmlHandler
 from geneticAlgo.ReportGenerator import ReportGenerator
 
+from datetime import datetime
 import sys
 import copy
 
 def main():
 	
 	#variable
-	firstEvaluator = []
-	lastEvaluator = []
-
-	global zMin
-	global zMax
+	allEvaluator = []
+	
+	#timer for execution time
+	StartTime = datetime.now()
 
 	# Handle config
 	xmlHandler = XmlHandler()
@@ -44,16 +44,10 @@ def main():
 			result.append([pop.currentPopulation[y],(Z,N,T)]);
 			pass
 
-		evaluator = Evaluation(result)
-	
-		#Save first and last iteration
-		if x == 0 : 
-			firstEvaluator = copy.deepcopy(evaluator)			
-		elif x == int(maxTour)-1 :
-			lastEvaluator = copy.deepcopy(evaluator)			
-			
+		evaluator = Evaluation(result)	
+		#Save the iteration
+		allEvaluator.append(copy.deepcopy(evaluator))		
 		pop.cleanUp()
-
 		# Rank the currentPop with pareto front and return a new population post sorting			
 		newPop = evaluator.tournamentRound()
 
@@ -62,35 +56,19 @@ def main():
 		pop = reproduction.reproducePop()
 		
 		sys.stdout.write('\r')
-		sys.stdout.write("Finished tour "+ str(x) +"/"+ maxTour)
+		sys.stdout.write("Finished tour "+ str(x+1) +"/"+ maxTour)
 		
 		pass
+
 	sys.stdout.write("\n")
 
-	#print(firstPop)
-	#print(lastEvaluator)
-	#print(firstEvaluator.printAllCurrentResult())
-	generator = ReportGenerator()
+	#generate Graph of wanted generation depending on the config files
+	generator = ReportGenerator(allEvaluator)
+	generator.generateResultReports()
 
-	list1a, list2a = firstEvaluator.getCoupleList("buffer",2)
-	list3a, list4a = firstEvaluator.getCoupleList("buffer","delta")
-
-	list1b, list2b = lastEvaluator.getCoupleList("buffer",2)
-	list3b, list4b = lastEvaluator.getCoupleList("buffer","delta")
-
-	generator.generateAGraph(("buffer", list1a), ("foresigth",list2a), 0)
-	generator.generateAGraph(("buffer", list1b), ("foresigth",list2b), 0)
-
-	generator.showPlot("bufferXprefetch")
-
-	generator.generateAGraph(("buffer", list3a), ("delta",list4a), 0)
-	generator.generateAGraph(("buffer", list3b), ("delta",list4b), 0)
-
-	generator.showPlot("bufferXDelta")
-
-
-	generator.printResultToFile(firstEvaluator.getAllCurrentResult(),"filefirstEvaluator")
-	generator.printResultToFile(lastEvaluator.getAllCurrentResult(),"filelastEvaluator")
+	EndTime = datetime.now()
+	totalTime = EndTime - StartTime
+	print ("Total time: "+str(totalTime.seconds//3600)+":"+ str((totalTime.seconds//60)%60)+":"+ str(totalTime.seconds))
 
 if __name__ == "__main__":
 	main()

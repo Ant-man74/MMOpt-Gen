@@ -52,7 +52,6 @@ class FECM:
 		self.geneCoefNextUse = individual[5]
 
 
-
 	"""
 	return a List of tuple with (Output tile nb Y, list of input tile necessary Ry[y]) sorted by output tile nb
 	"""
@@ -70,14 +69,12 @@ class FECM:
 	Outputs of CGM: N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs) Main loop
 	"""
 	def executeFECM(self):
+		
 		Di = self.mostCommonPrefetch(self.X, self.Ry)
 		Ti = self.prefetchStartDate(Di)
 		Sj = self.computeTile(self.Y, self.Ry, Di, Ti)
-
-		inciMatrix = self.buildIncidenceMatrix(Di, self.Ry, Sj)
-		
-		Bi, N, Uj0 = self.bufferAssignementSchedule(inciMatrix, Sj, self.xForYList)
-		
+		inciMatrix = self.buildIncidenceMatrix(Di, self.Ry, Sj)		
+		Bi, N, Uj0 = self.bufferAssignementSchedule(inciMatrix, Sj, self.xForYList)		
 		Uj = self.findStartDateTs(Uj0, self.beta)
 		delta = max(Uj) + self.beta
 
@@ -206,7 +203,6 @@ class FECM:
 						bufferToReplace = self.determineDiscardTile(i, unnecessaryBuffer, inciMatrix, necessarySpace)
 						
 						for discardedBuffer in bufferToReplace:
-							
 							assignedBuffer.remove(discardedBuffer)
 							freeBuffer.append(discardedBuffer[0])
 							buffSequence.append( ("minus", discardedBuffer[0], discardedBuffer[1]) )
@@ -219,6 +215,7 @@ class FECM:
 					buffSequence.append( ("add", bufferToAssign, tileToPrefetch[j]) )
 					N += 1
 				pass
+
 			Uj0.append( self.prefetchComputationStartDate(Uj0, N, self.alpha) )
 			pass
 
@@ -242,6 +239,7 @@ class FECM:
 
 	"""
 	Function that determine which buffer can be replaced depending on how many spots are needed
+	return a list of triplet (buffer, stepUntilNextUse, amountOfTimeUsed)
 	"""
 	def determineDiscardTile(self, currentY, unnecessaryBuffer, inciMatrix, necessarySpace):
 
@@ -251,26 +249,26 @@ class FECM:
 		for i in range(0,len(unnecessaryBuffer)):
 			
 			tileRow = outputTileList.index(unnecessaryBuffer[i][1])
-			stepUntilNextUse, amountOfTimeUsed = self.analyzeRow(inciMatrix[tileRow][1], self.geneForesigthMax, currentY)
+			stepUntilNextUse, amountOfTimeUsed = self.analyzeRow(inciMatrix[tileRow][1], currentY)
 			allStatBuffer.append( (unnecessaryBuffer[i], stepUntilNextUse, amountOfTimeUsed) )
 			pass
 
-		bufferToReplace = self.chooseReplacedBuffer(allStatBuffer, self.geneSelfKeeping, self.geneCoefNextUse, self.geneCoefAllUse, necessarySpace)
+		bufferToReplace = self.chooseReplacedBuffer(allStatBuffer, necessarySpace)
 		return bufferToReplace
 
 	"""
 	Give statistic on the row for an input tile depending on the foresigth gene	
 	"""
-	def analyzeRow(self, inciMatrixRow, geneForesigthMax, currentY):
+	def analyzeRow(self, inciMatrixRow, currentY):
 
 		stepUntilNextUse = 0
 		amountOfTimeUsed = 0
 
 		# GeneMaxForesigth is how far do we look in the matrix in advance (if there are 3000 output tile we don't want to consider them all)
-		if currentY+geneForesigthMax > len(inciMatrixRow):
+		if currentY + self.geneForesigthMax > len(inciMatrixRow):
 			iterLength = len(inciMatrixRow)
 		else:
-			iterLength = currentY+geneForesigthMax
+			iterLength = currentY + self.geneForesigthMax
 
 		for i in range(currentY, iterLength):
 			if inciMatrixRow[i] == 0 and amountOfTimeUsed == 0:
@@ -283,9 +281,11 @@ class FECM:
 	
 	"""
 	Choose depending on statistic and necessary spot to free which buffer to discard 
+	Use the genes: geneSelfKeeping, geneCoefNextUse, geneCoefAllUse
 	allStatBuffer = [ ( (bufferNb,inputTileNb), stepUntilNextUse, amountOfTimeUsed), ... ]
 	"""
-	def chooseReplacedBuffer(self, allStatBuffer, geneSelfKeeping, geneCoefNextUse, geneCoefAllUse , necessarySpace):
+	def chooseReplacedBuffer(self, allStatBuffer, necessarySpace):
+		
 		# Array of buffer Id that will be used to prefetch needed tile
 		bufferToReplace = []
 		# if we need more space than there are buffer available for replacement 
@@ -302,9 +302,9 @@ class FECM:
 			allBufferFavored = []
 			allBufferCandidate = []
 
-			# if possible try to conserve the one within the margin
+			# Sort the buffers depending on gene if possible try to conserve the one within the margin
 			for statBuffer in allStatBuffer:
-				if statBuffer[1] <= geneSelfKeeping:
+				if statBuffer[1] <= self.geneSelfKeeping:
 					allBufferFavored.append(statBuffer)
 				else:
 					allBufferCandidate.append(statBuffer)
@@ -312,60 +312,59 @@ class FECM:
 				allBufferFavored = sorted(allBufferFavored, key = lambda x:x[1], reverse = True)
 				pass
 
-			# if after that step we still have enough replacement buffer to fill the necessary space
+			# if after that step we have too much replacement, choose the best one
 			if len(allBufferCandidate) > necessarySpace:
-				
-				# sort by which buffer is used the soonest
-				allBufferNextUse = sorted(allBufferCandidate, key = lambda x:x[1])	
-				# sort by which buffer is most used		
-				allBufferAllUse = sorted(allBufferCandidate, key = lambda x:x[2], reverse = True)
-				allScore = []
-				#grade all the Buffer
-				for i in range(0,len(allBufferCandidate)):
-				
-					index1 = allBufferNextUse.index(allBufferCandidate[i])
-					index2 = allBufferAllUse.index(allBufferCandidate[i])
-					scoreNextUse = ( index1 / len(allBufferNextUse) ) * geneCoefNextUse
-					scoreAllUse = ( index1 / len(allBufferAllUse) ) * geneCoefAllUse
-					allScore.append( (allBufferCandidate[i], scoreAllUse + scoreNextUse) )
-					pass
-				
-				allScore = sorted(allScore, key = lambda x:x[1])
-				
-				while len(allBufferCandidate) < necessarySpace:
-					allBufferCandidate.append(pop(allScore[0]))
+
+				allScore = self.gradeBuffer(allBufferCandidate)				
+
+				while len(bufferToReplace) < necessarySpace:
+					bufferToReplace.append(allScore.pop(0))
 					pass
 
 
-			### THIS IS WTF
-			# To redo because this is a pile of burning garbage
-
-			#if there isn't enough buffer take buffer from the favord one
+			#if there isn't enough buffer take buffer from the favored one
 			elif len(allBufferCandidate) < necessarySpace:
-				#Assign buffer as long as we don't have enough
-				while len(allBufferCandidate) < necessarySpace:
-					
-
-					#if there are more than two buffer to choose from
-					if len(allBufferFavored) >= 2:
-						#if they are both used at the same time
-						if allBufferFavored[0][1] == allBufferFavored[1][1]:
-							#pick the one that is used the least in total
-							nextBuff = sorted( [allBufferFavored[0],allBufferFavored[1]], key = lambda x:x[2]) [0]
-						else:
-							nextBuff = allBufferFavored[0]
-					else:
-						nextBuff = allBufferFavored[0]
-
-
-					#next buff is a buffer from favoredBuffer that The algo deemed unworthy and thus is put in the trash
-					allBufferCandidate.append(nextBuff)
-					allBufferFavored.remove(nextBuff)
+				
+				bufferToReplace = [statsBuffer[0] for statsBuffer in allBufferCandidate]
+				
+				allScoreFav = self.gradeBuffer(allBufferFavored)	
+				
+				while len(bufferToReplace) < necessarySpace:
+					bufferToReplace.append(allScoreFav.pop(0))
 					pass
 
-			bufferToReplace = [statsBuffer[0] for statsBuffer in allBufferCandidate]
+			#else we had just enough extra buffer
+			else:
+				bufferToReplace = [statsBuffer[0] for statsBuffer in allBufferCandidate]
 
 		return bufferToReplace
+
+	"""
+	Grade the buffer given in entry depending on the genes criteria
+	Use the genes: geneCoefNextUse, geneCoefAllUse
+	return a list of tuple (buffer, nbInputTile)
+	"""
+	def gradeBuffer(self, allBuffer):
+		
+		# sort by which buffer is used the soonest
+		allBufferNextUse = sorted(allBuffer, key = lambda x:x[1])	
+		# sort by which buffer is most used		
+		allBufferAllUse = sorted(allBuffer, key = lambda x:x[2], reverse = True)
+		allScore = []
+		#grade all the Buffer
+		for i in range(0,len(allBuffer)):
+		
+			index1 = allBufferNextUse.index(allBuffer[i])
+			index2 = allBufferAllUse.index(allBuffer[i])
+			scoreNextUse = ( index1 / len(allBufferNextUse) ) * self.geneCoefNextUse
+			scoreAllUse = ( index1 / len(allBufferAllUse) ) * self.geneCoefAllUse
+			allScore.append( (allBuffer[i], scoreAllUse + scoreNextUse) )
+			pass
+		
+		allScore = sorted(allScore, key = lambda x:x[1])
+		allBufferByScore = [statsBuffer[0][0] for statsBuffer in allScore]
+		
+		return allBufferByScore
 
 	"""
 	Dét Ti: Start date sequence for Bi, unused for the moment
@@ -417,3 +416,5 @@ class FECM:
 			else:
 				Uj.insert(j,Uj[j-1]+beta)
 		return Uj
+
+

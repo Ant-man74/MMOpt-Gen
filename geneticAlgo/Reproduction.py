@@ -12,6 +12,7 @@ class Reproduction:
 	population = None
 
 	def __init__(self, popToRepro):
+		
 		self.mutationRate = int(XmlHandler.getItemFrom("algoGen","mutationRate"))
 		self.crossOverRate = int(XmlHandler.getItemFrom("algoGen","crossOverRate"))
 		self.population = popToRepro
@@ -20,6 +21,7 @@ class Reproduction:
 	Clean one point cut reproduction of chromosome, scalable for as much gene as we want
 	"""
 	def reproducePop(self):
+		
 		# only mate 80% of the pop
 		for x in range(0,int(round((len(self.population.currentPopulation)*40)/100))):
 			
@@ -58,8 +60,6 @@ class Reproduction:
 			self.population.currentPopulation[id1].mutate()
 			self.population.currentPopulation[id2].mutate()
 
-			#print(self.population.currentPopulation[id1])
-			#print(self.population.currentPopulation[id2])
 			pass
 		return self.population
 			

@@ -11,6 +11,7 @@ class XmlHandler:
 	treeConfig = None
 	paramAlgoGen = {}
 	paramMmopt = {}
+	paramReportOption = {}
 
 	"""
 	Entry method for the xml config handler
@@ -29,19 +30,40 @@ class XmlHandler:
 	Parse the xml tree of the config file
 	"""
 	def parseConfig(self):
+		
 		for categories in self.treeConfig.iter('paramsList'):
+			
 			id = categories.get("id")
+			
 			for param in categories.iter('param'):
+				
 				if id == "algoGen":
 					if param.find('value').text.find(";") == -1:
 						XmlHandler.paramAlgoGen[param.find('name').text] = param.find('value').text
 					else:
 						XmlHandler.paramAlgoGen[param.find('name').text] = param.find('value').text.split(";")
+				
 				elif id == "mmopt":
 					if param.find('value').text.find(";") == -1:
 						XmlHandler.paramMmopt[param.find('name').text] = param.find('value').text
 					else:
 						XmlHandler.paramMmopt[param.find('name').text] = param.find('value').text.split(";")
+				
+				elif id == "reportOption":
+					
+					if param.find('name').text == "wantedGeneration":
+						XmlHandler.paramReportOption[param.find('name').text] = param.find('value').text.split(";")
+					else:
+						
+						allTuple = []
+						unfinishedList = param.find('value').text.split(";")
+						
+						for tupleStr in unfinishedList:
+							listTuple = tupleStr.split(":")
+							finishedTuple = (listTuple[0].strip(), listTuple[1].strip())
+							allTuple.append(finishedTuple)
+
+						XmlHandler.paramReportOption[param.find('name').text] = allTuple
 		pass
 
 	"""
@@ -51,14 +73,19 @@ class XmlHandler:
 	@staticmethod
 	def getItemFrom(dictionnary, item):
 		ret = 0
+		
 		try:
+			
 			if dictionnary == "algoGen":
 				ret = XmlHandler.paramAlgoGen[item]
 			elif dictionnary == "mmopt":
 				ret = XmlHandler.paramMmopt[item]
+			elif dictionnary == "reportOption":
+				ret = XmlHandler.paramReportOption[item]
 			else :
 				raise NameError("NameError: Unknown dictionnary")
 			return ret
+		
 		except KeyError:
 			print ("KeyError: Unknown dictionnary entry")
 	
@@ -73,8 +100,11 @@ class XmlHandler:
 				XmlHandler.paramAlgoGen[item] = value
 			elif dictionnary == "mmopt":
 				XmlHandler.paramMmopt[item] = value
+			elif dictionnary == "reportOption":
+				XmlHandler.paramReportOption[item] = value
 			else :
 				raise NameError("NameError: Unknown dictionnary")
+		
 		except KeyError:
 			print ("KeyError: Unknown dictionnary entry") 	
 
@@ -85,5 +115,6 @@ class XmlHandler:
 	@staticmethod
 	def printConfig():
 		print (XmlHandler.paramMmopt)
-		print (XmlHandler.paramAlgoGen) 	
+		print (XmlHandler.paramAlgoGen) 
+		print (XmlHandler.paramReportOption) 	
 

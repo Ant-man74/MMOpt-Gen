@@ -83,23 +83,3 @@ class Evaluation:
 			pass
 
 		return fullStr
-
-	"""
-	result is a list of tuple with ( (buff, prefetch, t), Individual )
-	"""
-	def getCoupleList(self, criteria1, criteria2):
-
-		existingCriteria = ["buffer", "prefetch", "delta"]
-
-		if isinstance(criteria1, str):
-			list1 = [oneResult[1][existingCriteria.index(criteria1)] for oneResult in self.result]
-		else:
-			list1 = [oneResult[0].fullChromosome[criteria1] for oneResult in self.result]
-
-
-		if isinstance(criteria2, str):
-			list2 = [oneResult[1][existingCriteria.index(criteria2)] for oneResult in self.result]
-		else:
-			list2 = [oneResult[0].fullChromosome[criteria2] for oneResult in self.result]
-
-		return list1, list2

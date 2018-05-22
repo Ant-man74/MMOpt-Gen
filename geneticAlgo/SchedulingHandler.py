@@ -1,8 +1,6 @@
 
 import numpy as np
 import random
-from datetime import datetime
-import sys
 import os
 
 from .FECM import FECM
@@ -25,23 +23,21 @@ class SchedulingHandler:
 
 	"""
 	Execute the ECM algorythm according to the parameters
+	For now change the kernel manualy
 	"""
 	def executeSchedule(self, algo, individual):
-		
-		StartTime=datetime.now()			
+
 		Z, N, T = 0, 0, 0
 		#16 is the number of images to do (numer of file in /Kernel)
 		#for k in range(1):
-		Y,Ry = SchedulingHandler.extractTiles('test_4_',10)
+		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
 		X = SchedulingHandler.InputTile(Ry)
 
 		#0 is ECM
 		if algo == 0:
 		   fecm = FECM( X, Y, Ry, self.alpha, self.beta, individual )  
 		   Z, N, T = fecm.executeFECM()   			
-			
-		EndTime = datetime.now()
-
+		
 		return Z, N, T
 
 	"""
@@ -63,13 +59,14 @@ class SchedulingHandler:
 		return (Y,Ry)
 
 	"""
-	Retrieve the maximum and minimum number of buffer necessary for the algorithm to work on every kernel
+	Retrieve the maximum and minimum number of buffer necessary for the algorithm to work on ONE kernel
+	To have it work with all kernel uncomment all the line inside
 	"""
 	@staticmethod
 	def setBufferRange():
 		allBufferRange = []
 		#for k in range(16):
-		Y,Ry = SchedulingHandler.extractTiles('test_4_',10 )
+		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
 		Zmin = SchedulingHandler.MinNbBuffer(Ry)
 		Zmax = SchedulingHandler.MaxBuffersNb(Ry)
 		allBufferRange.append([Zmin, Zmax])

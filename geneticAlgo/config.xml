@@ -24,7 +24,7 @@
 		</param>
 		<param>
 			<name>maxTour</name>
-			<value>500</value>
+			<value>100</value>
 		</param>
 	</paramsList>
 	
@@ -65,5 +65,17 @@
 			<value>1 ; 10</value>
 		</param>
 		
+	</paramsList>
+
+	<paramsList id="reportOption">
+		<param>
+			<name>wantedGeneration</name>
+			<value>1 ; 100</value>
+		</param>
+		<!--Available stats: buffer, prefetch, delta, foresigth, tileKeeping, coefAllUse, coefNextUse -->
+		<param>
+			<name>wantedGraph</name>
+			<value> buffer : prefetch ; buffer : delta </value>
+		</param>
 	</paramsList>
 </algoConfig>
