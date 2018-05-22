@@ -26,8 +26,6 @@ Outputs of ECM: X,Y,Ry (Inputs) & N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
 """
 def ECM(X,Y,Ry,alpha,beta,Z):
     Di = PrefetchTile(X,Ry)
-    print(Di)
-    sys.exit(0)
     N = len(Di)
     Bi = DestinationTile(Di,Z)
     Ti = PrefetchStartDate(Di,alpha)

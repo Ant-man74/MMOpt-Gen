@@ -66,7 +66,7 @@ class Individual:
 		if x is 1:
 			ret = random.randint(zMin,zMax)
 		elif x is 2:
-			ret = random.randint(1,3) 
+			ret = 3#random.randint(1,3) 
 		return ret
 
 	"""

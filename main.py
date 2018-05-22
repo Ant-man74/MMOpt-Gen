@@ -39,10 +39,10 @@ def main():
 				(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[0],"ECM")
 			elif pop.currentPopulation[y].fullChromosome[1] == 2 :
 				(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[0],"CGM")
-			elif pop.currentPopulation[y].fullChromosome[1] == 2 :
+			elif pop.currentPopulation[y].fullChromosome[1] == 3 :
 				(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[0],"EECM")
-
 			result.append([pop.currentPopulation[y],(Z,N,T)]);
+			sys.exit(0)
 			pass
 
 		evaluator = Evaluation(result)

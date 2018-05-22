@@ -17,6 +17,7 @@ import math
 import random
 import logging
 import operator
+import sys
 
 
 #================================= Steps 
@@ -42,7 +43,7 @@ Définition de la liste Y de Ts à calculer & l'ensemble Ry (Requirements Set of
 def OutputTile():
     #Matrix0=open('TD1988-MatrixValue.txt','r')
     """ Small Instances """    
-    Matrix0=open('Kernel-test_2D\\test_2D-MatrixValue.txt','r') #kernel1
+    Matrix0 = open('Kernel-test_2D\\test_2D-MatrixValue.txt','r') #kernel1
     #Matrix0=open('Kernel-test_2D_PE\\test_2D_PE-MatrixValue.txt','r')#kernel2
     #Matrix0=open('Kernel-fisheye\\fisheye-MatrixValue.txt','r')#kernel3
     #Matrix0=open('Kernel-polaire\polaire-MatrixValue.txt','r')#kernel6
@@ -146,7 +147,7 @@ def PrefetchTile(X,Ry):
     DictX=FindDictX(X,Ry)
     """ 2: Trier DicX ds Ordre Decroissant en fonct de DictX.Values() """
     ListDictX=sorted(DictX.items(),key=lambda x:x[1], reverse=True)
-    for i in xrange(len(ListDictX)):
+    for i in range(len(ListDictX)):
         Di.insert(i,ListDictX[i][0])
     #Sp=dic.keys()
     return Di
@@ -269,7 +270,7 @@ def ComputeTile(Y,Ry,Di,Ti,alpha,beta):
     """ Dét Sj,Uj0 """
     DictAllConfigTs=FindAllConfigTs(Y,Ry,Di,Ti,alpha)
     ListAllConfigTs=sorted(DictAllConfigTs.items(),key=lambda x:x[1], reverse=False)
-    for j in xrange(len(ListAllConfigTs)):
+    for j in range(len(ListAllConfigTs)):
         Sj.insert(j,ListAllConfigTs[j][0])
         Uj0.insert(j,ListAllConfigTs[j][1])     
     """ Dét Uj, Delta"""
@@ -304,7 +305,7 @@ def FindConfigTs(Y,Ry,y,Di,Ti,alpha):
 Dét StartDateList: pour tte les Ts ds Sc en garantissant pas de chevauchement entre calculs 
 """
 def FindStartDateTs(Sj,Uj0,Uj,beta):    
-    for j in xrange(1,len(Uj0)):
+    for j in range(1,len(Uj0)):
         if Uj0[j]-Uj[j-1] >= beta:
             Uj.insert(j,Uj0[j])
         else:
@@ -341,26 +342,29 @@ Use the same idea as KTNS algorithm to find a Destination sequence
 Dét A: incidence matrix (0-1) of Te/Ts using Di & Sj
 """
 def FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta):
+    print (Di)
+    print(Sj)
+    sys.exit(0)
     A=np.zeros((len(Di),len(Sj)),dtype=int)
-    for i in xrange(len(Di)):
-        DictConfigTe=FindConfigTe(Di,Ti,Di[i],Sj,Uj,Y,Ry,beta)
-        Tile1=DictConfigTe.values()[0][0]
-        Tile2=DictConfigTe.values()[0][1]
-        for j in xrange(Sj.index(Tile1),Sj.index(Tile2)+1):
+    for i in range(len(Di)):
+        DictConfigTe=list(FindConfigTe(Di,Ti,Di[i],Sj,Uj,Y,Ry,beta).items())
+        Tile1=DictConfigTe[0][1][0]
+        Tile2=DictConfigTe[0][1][1]
+        for j in range(Sj.index(Tile1),Sj.index(Tile2)+1):
             A[i][j]=1
     return A
 
-##    for i in xrange(len(Sp)):
+##    for i in range(len(Sp)):
 ##        DictConfigTe=FindConfigTe(Sp,Bp,Sp[i],Sc,Bc,Y,Ry,beta)
 ##        Tile1=DictConfigTe.values()[0][0]
 ##        Tile2=DictConfigTe.values()[0][1]
 ##        #print "ConfigTe: ", (i,Tile1,Tile2)
-##        for j in xrange(Sc.index(Tile1),Sc.index(Tile2)+1):
-##            #print "TS: ", (j, list(xrange(Sc.index(Tile1),Sc.index(Tile2)+1)))
+##        for j in range(Sc.index(Tile1),Sc.index(Tile2)+1):
+##            #print "TS: ", (j, list(range(Sc.index(Tile1),Sc.index(Tile2)+1)))
 ##            A[i][j]=1
 ##            #print "Matrix A: ", A[i][j]
-##        for j in xrange(len(A[0])):
-##            if j in xrange(Sc.index(Tile1),Sc.index(Tile2+1)):#Tile1:Computation n°1 & Tile2: Last Computation
+##        for j in range(len(A[0])):
+##            if j in range(Sc.index(Tile1),Sc.index(Tile2+1)):#Tile1:Computation n°1 & Tile2: Last Computation
 ##                A[i][j]==1
 ##            else:
 ##                A[i][j]==0 
@@ -403,9 +407,9 @@ def FindListTsDate(ListTs,Sj,Uj):
 Dét Z: Nb d Buffers correspondant à la matrice A
 """
 def FindBufferNumber(A):
-    (x,y)=shape(A)
+    (x,y)=np.shape(A)
     ListBuff=[]
-    for j in xrange(len(A[0])):
+    for j in range(len(A[0])):
         ListBuff.append(ColumnCapacity(A,j))
     Z=max(ListBuff)
     return Z
@@ -439,7 +443,7 @@ On peut aussi retourner un 3 tuples (Di, Bi, Ti)
 <--->(Quelle Tuile x, Quelle Buffer z, à Quelle Dtae) avec Z et alpha comme données
 """
 def FindBloc1(A,j):
-    (x,y)=shape(A)
+    (x,y)=np.shape(A)
     DicBloc1={}
     for i in range(0,x):
         if A[i][j] == 0: continue
@@ -560,8 +564,6 @@ def FreeBuffer(j,D1):
 """
 Outputs of EECM: X,Y,Ry (Inputs) & Di,Bi,Ti,N,Z,Sj,Uj,Delta (Outputs)
 """
-(X,Y,Ry)=InputsData()
-
 def EECM(X,Y,Ry,alpha,beta, Z): 
     """ Phase 1: ECM outputs <---> N,Di,Bi0,Z0,Ti,Sj,Uj,Delta """
     Di=PrefetchTile(X,Ry)
@@ -575,7 +577,8 @@ def EECM(X,Y,Ry,alpha,beta, Z):
     A=FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta)
     Z=FindBufferNumber(A)
     Bi=reduce(lambda x,y:x+y,DestinationTile(A,Z))
-    
+    print (A)
+    print (Bi)
     return Sj, Uj, Di, Bi, Ti, Z0, Z, N, Delta
 
 #=======================================================================================
@@ -593,7 +596,24 @@ def LowerBounds(X,Y,Ry,alpha,beta):
     lbDelta1= max(lb1Delta,lb3Delta)     
     return lbN,lbZ,lb1Delta,lb2Delta,lb3Delta,lbDelta,lbDelta1
 
+"""
+Deprecated method of python 2.7 but necessary for this algorythm as I don't know how to replace it 
+"""
+def reduce(function, iterable, initializer=None):
+    it = iter(iterable)
+    
+    if initializer is None:         
+        try:
+            initializer = next(it)
+        except StopIteration:
+            raise TypeError('reduce() of empty sequence with no initial value')     
+    
+    accum_value = initializer       
+    
+    for x in it:
+        accum_value = function(accum_value, x)
 
+    return accum_value
 
 
 
