@@ -13,6 +13,7 @@ def main():
 	#variable
 	firstEvaluator = []
 	lastEvaluator = []
+	method = ["EECM", "CGM"]
 	global zMin
 	global zMax
 
@@ -35,14 +36,10 @@ def main():
 		# Test the currentPop to get the result of each Individual
 		for y in range(0,len(pop.currentPopulation)):
 
-			if pop.currentPopulation[y].fullChromosome[1] == 1 :
-				(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[0],"ECM")
-			elif pop.currentPopulation[y].fullChromosome[1] == 2 :
-				(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[0],"CGM")
-			elif pop.currentPopulation[y].fullChromosome[1] == 3 :
-				(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[0],"EECM")
+			#to change method change the method array and number def in Individual
+			(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[0],method[pop.currentPopulation[y].fullChromosome[1]])
+			
 			result.append([pop.currentPopulation[y],(Z,N,T)]);
-			sys.exit(0)
 			pass
 
 		evaluator = Evaluation(result)

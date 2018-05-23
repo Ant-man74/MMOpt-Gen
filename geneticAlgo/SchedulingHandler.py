@@ -5,7 +5,6 @@ from datetime import datetime
 import sys
 import os
 
-from .ECM import *
 from .CGM import *
 from .EECM import *
 
@@ -77,7 +76,7 @@ class SchedulingHandler:
 				Sj, Uj, Di, Bi, Ti, Z, N, Delta = ECM(X, Y, Ry, self.alpha, self.beta, iterZ)
 
 			elif algo == "CGM":
-				Sj, Uj, Di, Bi, Ti, Z, N, Delta = ECM(X, Y, Ry, self.alpha, self.beta, iterZ)
+				Sj, Uj, Di, Bi, Ti, Z, N, Delta = CGM(X, Y, Ry, self.alpha, self.beta, iterZ)
 
 			elif algo == "EECM":
 			    Sj, Uj, Di, Bi, Ti, Z0, Z, N, Delta = EECM(X, Y, Ry, self.alpha, self.beta, iterZ)     
@@ -85,12 +84,10 @@ class SchedulingHandler:
 			
 			#print "1- All Outputs-ECM are (N1,Z1,Delta1) with values = ", (N1,Z1,Delta1)
 			#Step0: Det DeltaMCT
-			
-			DeltaMCT = [34,35,38,53,53,69,71,70,60,60,60,90,90,120,120,150]
-			
+			#DeltaMCT = [34,35,38,53,53,69,71,70,60,60,60,90,90,120,120,150]
 			#Step6: Det Ratio for ECM heuristic
 			#???
-			R1 = float(Delta)/float(DeltaMCT[k])
+			#R1 = float(Delta)/float(DeltaMCT[k])
 			
 			#print "Ratio of ECM's Potential is: %.2f " % R1
 

@@ -9,42 +9,47 @@ import math
 import numpy as np
 import operator 
 import random
-
-#======================================= Phase 1 =======================================
-"""
-Phase1: Find Sj0
-     Step1: Find NewY & NewRy <---> ordonner Y ds l'ordre décroissant en fct [Ry|
-     Step2: Find GroupG for each y in NewY <---> GroupG(y)=[y'#y & Ry' inclus= Ry]
-     Step3:
-"""
-
+import sys
 
 """
-Outputs of CGM: N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
+Outputs of CGM: N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs) Main loop
 """
 def CGM(X,Y,Ry,alpha,beta,Z):
+    #Phase 1
     Sj0, Sj0Ry, GroupSj0 = ComputeSequence0(Y, Ry)    
     Di0 = [Sj0Ry[0]]
-    Di0 = PrefetchTile(Sj0, Sj0Ry, Di0)
+
+    #Phase 2
+    Di0, N = PrefetchTile(Sj0, Sj0Ry, Di0)
     Di = reduce(lambda x, y:x+y, Di0)
     N = len(Di)
     Bi = DestinationTile(Di, Z)
+
+    #Phase3
     Sj = ComputeSequence(Y, Ry, Sj0, Sj0Ry, GroupSj0)
     Ti0, Uj1, Delta1 =StartDateTile0(Y, Ry, Di0, alpha, beta, Sj0, GroupSj0)
     Ti1 = reduce(lambda x, y:x+y, Ti0)
+    
+    #Phase 4
     Ti, Uj, Delta = StartDateTile(Y, Ry, Sj, Di, Ti1, Uj1, alpha, beta)       
 
-      """ Phase 2: min Z (based on KTNS's Idea) """    
+    #Phase 5
     A=FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta)
     Z=FindBufferNumber(A)
-    Bi=reduce(lambda x,y:x+y,DestinationTile(A,Z))
-    print (A)
-    print (Bi)
-    return Sj, Uj, Di, Bi, Ti, Z0, Z, N, Delta
-          
+    Bi=reduce(lambda x,y:x+y,DestinationTile0(A,Z))
 
-#=======================================================================================
-#================================== ComputeSequence0() =================================
+    return Sj, Uj, Di, Bi, Ti, Z, N, Delta
+
+   
+#==============================================================================
+# Phase 1 : Find Sj0
+#==============================================================================
+"""
+    Step1: Find NewY & NewRy <---> ordonner Y ds l'ordre décroissant en fct [Ry|
+    Step2: Find GroupG for each y in NewY <---> GroupG(y)=[y'#y & Ry' inclus= Ry]
+    Step3:
+"""
+
 def ComputeSequence0(Y, Ry):
     OrdoY = ComputeTile1(Y, Ry)
     NewY,GroupY = FindNewGroupY(Y, Ry, OrdoY)
@@ -52,9 +57,6 @@ def ComputeSequence0(Y, Ry):
     Sj0Ry = FindConfigSj0(Y, Ry, Sj0)
     return Sj0,Sj0Ry,GroupSj0
 
-
-#=======================================================================================
-#==================================== ComputeTile1() ===================================
 """
 Det OrdoY: Y ordonnée ds l'ordre décroissant en fct |Ry|
 """ 
@@ -93,11 +95,11 @@ def FindNewGroupY(Y,Ry,OrdoY):
             DictGroupG = FindGroupG(Y, Ry, OrdoY, OrdoY[j])
         else: continue
         
-        NewY.append(DictGroupG.keys()[0])
-        GroupY.append(list(set(DictGroupG.values()[0])-set(reduce(lambda x, y:x+y, GroupY))))        
+        NewY.append(list(DictGroupG.keys())[0])
+        GroupY.append(list(set(list(DictGroupG.values())[0])-set(reduce(lambda x, y:x+y, GroupY))))        
    
     return NewY,GroupY
-#===================================== FindGroupG() ====================================
+
 """
 Det DictGroupG: {y:GroupG}, où GroupG définit la liste de tuiles y' ds Y, où y'#y  & Ry' inclus= Ry """ 
 def FindGroupG(Y,Ry,OrdoY,y):
@@ -110,9 +112,6 @@ def FindGroupG(Y,Ry,OrdoY,y):
     DictGroupG={y:GroupG}
     return DictGroupG
 
-
-#=======================================================================================
-#==================================== ComputeTile2() ===================================
 """
 Det Sj0: NewY ordonnée ds l'ordre croissant en fct |Ry|
 """ 
@@ -126,7 +125,7 @@ def ComputeTile2(Y,Ry,NewY,GroupY):
     for y in Sj0:
         GroupSj0.append(GroupY[NewY.index(y)])
     return Sj0,GroupSj0
-#==================================== FindDictTile2() ==================================
+
 """
 Det DictTile2: un dictionnaire de configuration de la liste NewY a partir de Y et Ry 
 """ 
@@ -136,9 +135,6 @@ def FindDictTile2(Y,Ry,NewY):
         DictTile2.update({a:Ry[Y.index(a)]})
     return DictTile2
 
-
-#=======================================================================================
-#==================================== FindConfigSj0() ==================================
 """
 Det Sj0Ry: Ry de chaque Ts ds Sj0
 """ 
@@ -148,21 +144,14 @@ def FindConfigSj0(Y,Ry,Sj0):
         Sj0Ry.append(Ry[Y.index(y)])
     return Sj0Ry
 
-
-
-
-
 #=======================================================================================
-#======================================= Phase 2 =======================================
+# Phase 2 : Find Di, Bi , Tj, Uj & Delta
 #=======================================================================================
 """
-Phase3: Find Di, Bi , Tj, Uj & Delta
-     Step1: Find Di <---> liste de Prefetches correspondante à la liste Sj0
-     Step2: Find Bi <---> Affecter a chaque Prefetch step un buffer #
+    Step1: Find Di <---> liste de Prefetches correspondante à la liste Sj0
+    Step2: Find Bi <---> Affecter a chaque Prefetch step un buffer #
 """
 
-#=======================================================================================
-#==================================== PrefetchTile() ===================================
 """
 Det Di: la sequence de Préchargements correspondante à la liste de Ts Sj0
 """
@@ -172,7 +161,7 @@ def PrefetchTile(Sj0,Sj0Ry,Di):
         N = N+1
         Di.insert(j,NextPrefetch(Sj0,Sj0Ry,Di,Sj0[j]))
     return Di, N
-#==================================== NextPrefetch() ===================================
+
 """
 Det NextTile: la liste de Te x a précharger pour la 1 ère fois en // du calcul d Ts y 
 """ 
@@ -185,8 +174,6 @@ def NextPrefetch(Sj0,Sj0Ry,Di,y):
             NextTile.append(x)            
     return NextTile
 
-#=======================================================================================
-#================================= DestinationTile() ===================================
 """
 Det Bi: la sequence de Destination correspondante à la liste Di en utilisant la liste
 de buffers Z de BuffersNb elements
@@ -198,7 +185,7 @@ def DestinationTile(Di,Z):
         NbBuff,ListBuff=AffectBuffer(Di,i,ListBuff)
         Bi.insert(i,NbBuff)  
     return Bi
-#=================================== AffectBuffer() ====================================
+
 """
 Det NbBuff,ListBuff: le N° de Buffer (NbBuff) affecté aléatoirement à partir de la liste initiale
 ListBuff à une Te i & MAJ de ListBuff (on supprime NbBuff de ListBuff) 
@@ -208,20 +195,14 @@ def AffectBuffer(Di,i,ListBuff):
     ListBuff.remove(NbBuff)
     return NbBuff,ListBuff
 
-
-
-
 #=======================================================================================
-#======================================= Phase 3 =======================================
+# Phase 3 : Find Sj, Tj, Uj & Delta
 #=======================================================================================
 """
-Phase3: Find Sj, Tj, Uj & Delta
-     Step1: Find Sj <---> integrer ds Sj0 le GroupG correspondant a chaque tuile y
-     Step2: Find Tj, Uj & Delta
+    Step1: Find Sj <---> integrer ds Sj0 le GroupG correspondant a chaque tuile y
+    Step2: Find Tj, Uj & Delta
 """
 
-#=======================================================================================
-#=================================== ComputeSequence() =================================
 """
 Det Sj: la sequence de calculs concatenant les ts ds Sj0 et celles ds Sj0GroupG
 """ 
@@ -232,8 +213,6 @@ def ComputeSequence(Y,Ry,Sj0,Sj0Ry,GroupSj0):
     return Sj
 
 
-#=======================================================================================
-#==================================== StartDateTile0() =================================
 """
 Det Ti1,Uj1,Delta1 (together)
 """
@@ -244,9 +223,6 @@ def StartDateTile0(Y,Ry,Di0,alpha,beta,Sj0,GroupSj0):
     Delta1=Uj1[-1]+beta
     return Ti1,Uj1,Delta1
 
-
-#=======================================================================================
-#================================= ComputeStartDate() ==================================
 """
 Det Uj1: la sequence de StartDate correspondante à la liste Sj
 """ 
@@ -257,7 +233,7 @@ def ComputeStartDate(Di0,Sj0,GroupSj0,alpha,beta):
     for j in range(len(Sj0)):
         Uj1.extend([Uj0[j]]+Uj0Group[j])
     return Uj1
-#==================================== StartDateSj0() ===================================
+
 """
 Det Uj0: la sequence de StartDate correspondante à la liste Sj0
 """ 
@@ -268,7 +244,7 @@ def StartDateSj0(Di0,Sj0,GroupSj0,alpha,beta):
         B=Uj0[j-1]+alpha*(len(Di0[j]))
         Uj0.insert(j,max(A,B))
     return Uj0
-#================================ StartDateGroupSj0() ==================================
+
 """
 Det Uj0Group: la sequence de StartDate correspondante à la liste GroupSj0
 """ 
@@ -281,8 +257,6 @@ def StartDateGroupSj0(Sj0,GroupSj0,alpha,beta,Uj0):
             Uj0Group.append([])
     return Uj0Group
 
-#=======================================================================================
-#================================= PreftchStartDate() ==================================
 """
 Det Ti: la sequence de Start Date correspondante à la liste Di
 """ 
@@ -297,7 +271,7 @@ def PrefetchStartDate(Di0,Uj0,alpha,beta):
         else:
             Ti.insert(i,[])
     return Ti
-#==================================== CalculDate() =====================================
+
 """
 On prend une liste S, une cte a et une date initiale InitialDate
 A chaque elt de 1 à len(liste), on incremente la date initiale par la cte
@@ -317,23 +291,13 @@ def CalculDate(S,a,InitialDate):
         S1.append(InitialDate)
     return S1
 
-
-
 #=======================================================================================
-#=======================================================================================
-#=======================================================================================
-
-
-
-#=======================================================================================
-#======================================= Phase 4 =======================================
+# Phase 4 : Find Tj, Uj & Delta
 #=======================================================================================
 """
-Phase4: Find Tj, Uj & Delta
-        ---> Apply the idea of "Shifting Prefetches/Computations if necessary"
+    ---> Apply the idea of "Shifting Prefetches/Computations if necessary"
 """
-#=======================================================================================
-#==================================== StartDateTile() ==================================
+
 """
 Det Ti,Uj,Delta (together)
 """
@@ -365,27 +329,8 @@ def FindUj(Y,Ry,Sj,Di,Ti,Uj1,alpha,beta):
         Uj.insert(j,max(A,B))
     return Uj
 
-
-def reduce(function, iterable, initializer=None):
-    it = iter(iterable)
-    if initializer is None:
-        try:
-            initializer = next(it)
-        except StopIteration:
-            raise TypeError('reduce() of empty sequence with no initial value')
-    accum_value = initializer
-    for x in it:
-        accum_value = function(accum_value, x)
-    return accum_value
-
 #=======================================================================================
-#=======================================================================================
-#=======================================================================================
-
-
-
-#=======================================================================================
-#                       3: Optimiser Z ? ---> Idea 1
+# Phase 5: Optimiser Z ? ---> Idea 1
 #=======================================================================================
 """
 Use the same idea as KTNS algorithm to find a Destination sequence
@@ -398,15 +343,10 @@ Use the same idea as KTNS algorithm to find a Destination sequence
                ---> Z=BuffersNb(Ry)
 """
 
-#=======================================================================================
-#================================ FindIncidenceMatrix() ================================
 """
 Dét A: incidence matrix (0-1) of Te/Ts using Di & Sj
 """
 def FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta):
-    print (Di)
-    print(Sj)
-    sys.exit(0)
     A=np.zeros((len(Di),len(Sj)),dtype=int)
     for i in range(len(Di)):
         DictConfigTe=list(FindConfigTe(Di,Ti,Di[i],Sj,Uj,Y,Ry,beta).items())
@@ -416,21 +356,6 @@ def FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta):
             A[i][j]=1
     return A
 
-##    for i in range(len(Sp)):
-##        DictConfigTe=FindConfigTe(Sp,Bp,Sp[i],Sc,Bc,Y,Ry,beta)
-##        Tile1=DictConfigTe.values()[0][0]
-##        Tile2=DictConfigTe.values()[0][1]
-##        #print "ConfigTe: ", (i,Tile1,Tile2)
-##        for j in range(Sc.index(Tile1),Sc.index(Tile2)+1):
-##            #print "TS: ", (j, list(range(Sc.index(Tile1),Sc.index(Tile2)+1)))
-##            A[i][j]=1
-##            #print "Matrix A: ", A[i][j]
-##        for j in range(len(A[0])):
-##            if j in range(Sc.index(Tile1),Sc.index(Tile2+1)):#Tile1:Computation n°1 & Tile2: Last Computation
-##                A[i][j]==1
-##            else:
-##                A[i][j]==0 
-#=================================== FindConfigTe() ====================================
 """
 Dét DictConfigTe, où
     - key= x   ---> N° of Te in Di
@@ -441,7 +366,7 @@ def FindConfigTe(Di,Ti,x,Sj,Uj,Y,Ry,beta):
     ListTsDate=FindListTsDate(ListTs,Sj,Uj)        
     DictConfigTe={x:(Sj[Uj.index(min(ListTsDate))],Sj[Uj.index(max(ListTsDate))])}
     return DictConfigTe
-#================================== FindListTs() =======================================
+
 """
 Dét ListTs: la liste de Ts où la tuile Te donnée (x) est ds Ry
 """
@@ -451,7 +376,7 @@ def FindListTs(Y,Ry,x):
         if x in Ry[j]:
             ListTs.append(Y[j])
     return ListTs
-#================================ FindListTsDate() =====================================
+
 """
 Dét ListTsDate: la liste de Start Date de la ListTs pour la Te x 
 """
@@ -461,10 +386,6 @@ def FindListTsDate(ListTs,Sj,Uj):
         ListTsDate.append(Uj[Sj.index(Ts)])
     return ListTsDate
 
-
-
-#=======================================================================================
-#================================= FindBufferNumber() ==================================
 """
 Dét Z: Nb d Buffers correspondant à la matrice A
 """
@@ -476,27 +397,23 @@ def FindBufferNumber(A):
     Z=max(ListBuff)
     return Z
 
-#================================== ColumnCapacity() ===================================
 def ColumnCapacity(A,j):
     """
     Determiner la valeur qui calcule la somme de 1 de la colonne j de la matrice A
     """
     return sum(A[:,j])
 
-#=======================================================================================
-#================================== DestinationTile() ==================================
 """
 Dét Bi: Destination de tuiles préchargées (Quel Buffer pour Quelle Tuile)
 ---> (Bi est une liste de listes)
 """
-def DestinationTile(A,Z):
+def DestinationTile0(A,Z):
     Bi=[]
     ListFreeBuff=list(range(Z))
     DicAffectBuffAllBloc1={}
     ListFreeBuff,DicAffectBuffAllBloc1,D=FindAllListBuff(A,ListFreeBuff,DicAffectBuffAllBloc1,Bi)    
     return Bi
 
-#====================================== FindBloc1() ====================================
 """
 On prend la matrice A
 On retourne une liste contient les indices i correspondants aux blocs de 1
@@ -533,7 +450,7 @@ def FindBloc1(A,j):
                 k += 1
             DicBloc1[i]=(j,j+k-1)
     return DicBloc1
-#=================================== FindAllListBuff() =================================
+
 """
 Dét ListFreeBuff,DicAffectBuffAllBloc1,Bi: destination pour tte colonne j de A
 """
@@ -560,7 +477,6 @@ def FindAllListBuff(A,ListFreeBuff,DicAffectBuffAllBloc1,Bi):
         
     return ListFreeBuff,DicAffectBuffAllBloc1,Bi
 
-#==================================== FindListBuff() ===================================
 """
 Dét D1,L1,L: la liste ListAffectBuff pour une colonne j 
 """
@@ -570,24 +486,22 @@ def FindListBuff(A,j,L):
     D1={}#dic Affect Buff of all bloc1 of j
     L1=[]#list Affect Buff of all bloc1 of j
     for list1 in ListBloc1:
-        D=AffectBuffer(list1,L)
+        D=AffectBuffer0(list1,L)
         for valeur in D.values():
             L.remove(valeur)
         D1.update(D)
         L1.extend(D.values())
     return D1,L1,L
 
-#==================================== AffectBuffer() ===================================
 """
 Dét pour un bloc1 quel buffer libre à affecter
 (Affecter 1 Buffer à un Bloc de 1)
 """
-def AffectBuffer(Bloc1,L):
+def AffectBuffer0(Bloc1,L):
     NumRow,FirstCol,LastCol,k=Bloc1Details(Bloc1)
     D={(NumRow,FirstCol,LastCol):random.choice(L)}
     return D
 
-#==================================== Bloc1Details() ===================================
 """
 Dét NumRow,FirstCol,LastCol,k(=LenBloc1): les détails d'un bloc1
 """
@@ -599,7 +513,6 @@ def Bloc1Details(L):
         k=LastCol-FirstCol+1
     return NumRow,FirstCol,LastCol,k
 
-#===================================== FreeBuffer() ====================================
 """
 Dét L: la liste de Buff a liberer
 """
@@ -610,3 +523,18 @@ def FreeBuffer(j,D1):
             L.append(value)
     return L
 
+#=======================================================================================
+# Utility
+#=======================================================================================
+
+def reduce(function, iterable, initializer=None):
+    it = iter(iterable)
+    if initializer is None:
+        try:
+            initializer = next(it)
+        except StopIteration:
+            raise TypeError('reduce() of empty sequence with no initial value')
+    accum_value = initializer
+    for x in it:
+        accum_value = function(accum_value, x)
+    return accum_value

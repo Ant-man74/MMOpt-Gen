@@ -11,15 +11,15 @@ import logging
 import operator 
 import sys
 
-#======================================= Phase 1 =======================================
+#==============================================================================
+# Phase 1 : Find Pi= (Di,Bi,Ti) (Prefetches Schedule)
+#==============================================================================
 """
-Phase1: Find Pi= (Di,Bi,Ti) (Prefetches Schedule)
     Step1: Calculer pour chaque Te de X son Nb_Occ
     Step2: Dét Di: X ds l'ordre decroissant d Nb_Occ (d_i)
     Step3: Dét Bi: Affecter aléatoirement à chaque Te 1 buffer parmi X' Buffers (b_i)
     Step4: Dét Ti: Dét pour chaque Te sa date de début de préchargement (t_i)
 """
-
 
 """
 Outputs of ECM: X,Y,Ry (Inputs) & N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
@@ -27,6 +27,7 @@ Outputs of ECM: X,Y,Ry (Inputs) & N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs)
 def ECM(X,Y,Ry,alpha,beta,Z):
     Di = PrefetchTile(X,Ry)
     N = len(Di)
+    
     Bi = DestinationTile(Di,Z)
     Ti = PrefetchStartDate(Di,alpha)
     Sj, Uj, Delta = ComputeTile(Y,Ry,Di,Ti,alpha,beta)
@@ -92,7 +93,6 @@ def ComputeTile(Y,Ry,Di,Ti,alpha,beta):
     Delta = max(Uj) + beta #  Delta=Uj[-1] +beta
     return Sj, Uj, Delta
 
-
 """
 Dét DictX: un Dictionnaire qui determine pour chaque Te de la liste X, le Nb d'occurence
 % à chaque elt de Ry:
@@ -119,7 +119,6 @@ def FindNbOccurTe(X,i,Ry):
         NbOccur+=list(Ry[j]).count(X[i])
     return {X[i]:NbOccur}
 
-
 """
 Dét le N° de Buffer (NbBuff) affecté aléatoirement à partir de la liste initiale
 ListBuff à une Te i & MAJ de ListBuff (on supprime NbBuff de ListBuff) 
@@ -130,14 +129,10 @@ def AffectBuffer(Di,i,listBuff):
     listBuff.remove(NbBuff)
     return NbBuff,listBuff
 
-
-
-
 #=======================================================================================
-#======================================= Phase 2 =======================================
+# Phase 2 : Find Sj, Uj & Delta (Computations Schedule)
 #=======================================================================================
 """
-Phase2: Find Sj, Uj & Delta (Computations Schedule)
     Step5: Dét Sj: Calculer chaque Ts dès que ses Te requises sont préchargées
                ---> Sj=Y ds ordre Croissant de max(Ti[Te requises])
     Step6: Dét Uj: dét pour chaque Ts sa date de début de calcul
@@ -145,7 +140,6 @@ Phase2: Find Sj, Uj & Delta (Computations Schedule)
                ---> Pas de chevauchement entre calculs: Uj[y+1] >= Uj[y]+beta
     Step7: Dét Delta: Total Completion Time ---> Delta=Uj[-1]+beta
 """
-
 
 """
 Dét DictAllConfigTs: la configuration de tte les Ts de la liste Y:

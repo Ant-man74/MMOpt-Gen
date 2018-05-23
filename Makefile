@@ -16,12 +16,12 @@ clean: ## Clean the whole project
 	rm -rf test/*.pyc
 
 cleanTest: ## Clean the test package
-	rm rm -rf test/__pycache__/  
-	rm rm -rf test/*.pyc 
+	rm -rf test/__pycache__/  
+	rm -rf test/*.pyc 
 
 cleanGen: ## Clean the geneticAlgo package
-	rm $(RMFLAG) /geneticAlgo/__pycache__
-	rm $(RMFLAG) /geneticAlgo/*.pyc
+	rm -rf /geneticAlgo/__pycache__
+	rm -rf /geneticAlgo/*.pyc
 
 install: ## Install dependency
 	pip install lxml
