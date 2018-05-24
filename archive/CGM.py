@@ -70,6 +70,8 @@ Det NewY,GroupY:
 """
 def FindNewGroupY(Y,Ry,OrdoY):
     DictGroupG0=FindGroupG(Y,Ry,OrdoY,OrdoY[0])
+    print(DictGroupG0)
+    print("__________________________________")
     NewY=[DictGroupG0.keys()[0]]
     GroupY=[DictGroupG0.values()[0]]
     for j in xrange(1,len(OrdoY)):

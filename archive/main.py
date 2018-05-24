@@ -15,6 +15,7 @@ from time import *
 from datetime import datetime  
 import pickle
 import sys
+import os
 #from google.apputils import app
 
 from NeededFcts import *
@@ -29,7 +30,7 @@ from CGM import *
 #=======================================================================================
 def Main():
         """ Output DATA """
-        FileName='C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\CGM_Solutions.txt'
+        FileName= os.getcwd()+'/CGM_Solutions.txt'
         #FileName='C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\ECM_Solutions.txt'
         FileRts=open(FileName, 'w')
         FileRts.write('Results CGM Heuristic on the MMOpt Benchmarks: \n \n')
@@ -41,7 +42,7 @@ def Main():
         for k in range(2):                
                 StartTime=datetime.now()
                 #Step1: Det Y,Ry,X à partir de fichier .txt        
-                Matrix0=open('C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\Kernels\\test_2D_{}.txt'.format(k),'r') #2 instances
+                Matrix0=open(os.getcwd()+'/Kernels/test_cameleon_{}.txt'.format(k),'r') #2 instances
                 #Matrix0=open('C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\Kernels\\test_fisheye_{}.txt'.format(k),'r') #3 instances
                 #Matrix0=open('C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\Kernels\\test_polaire_{}.txt'.format(k),'r') #3 instances  
                 #Matrix0=open('C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\Kernels\\test_fd_{}.txt'.format(k),'r') #2 instances

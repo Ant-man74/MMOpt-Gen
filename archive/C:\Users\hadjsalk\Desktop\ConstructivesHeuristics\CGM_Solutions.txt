@@ -2,4 +2,3 @@ Results CGM Heuristic on the MMOpt Benchmarks:
  
 N° 	 |lbN 	 |lbZ	 |lbDelta	 |N 	 |Z Delta	 |	 |CPU(s)	 |Gap(%)
  
-0	 |784	 |9	 |2634	 |784	 |784	 |2662	 |0:00:03.864400	 |1.0106302202

@@ -66,7 +66,7 @@ class Individual:
 			ret = random.randint(zMin,zMax)
 		# Method of scheduling EECM or CGM
 		elif x is 2:
-			ret = random.randint(0,1) 
+			ret = 2#random.randint(0,1) 
 		return ret
 
 	"""

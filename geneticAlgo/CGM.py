@@ -16,7 +16,17 @@ Outputs of CGM: N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs) Main loop
 """
 def CGM(X,Y,Ry,alpha,beta,Z):
     #Phase 1
-    Sj0, Sj0Ry, GroupSj0 = ComputeSequence0(Y, Ry)    
+    Sj0, Sj0Ry, GroupSj0 = ComputeSequence0(Y, Ry)
+    print ("--------------")   
+    print (Sj0)    
+    print ("//////////////////////")   
+
+    print (Sj0Ry)    
+    print ("____________________")   
+
+    print (GroupSj0)    
+    print ("2222222222222222222222222")   
+
     Di0 = [Sj0Ry[0]]
 
     #Phase 2
@@ -51,7 +61,9 @@ def CGM(X,Y,Ry,alpha,beta,Z):
 """
 
 def ComputeSequence0(Y, Ry):
+   
     OrdoY = ComputeTile1(Y, Ry)
+   
     NewY,GroupY = FindNewGroupY(Y, Ry, OrdoY)
     Sj0,GroupSj0 = ComputeTile2(Y, Ry,NewY, GroupY)
     Sj0Ry = FindConfigSj0(Y, Ry, Sj0)
@@ -64,7 +76,6 @@ def ComputeTile1(Y,Ry):
     DictTile1 = FindDictTile1(Y,Ry)
     OrdoY = []
     ListDictTile1 = sorted(DictTile1.items(), key = lambda x:len(list(x[1])), reverse=True)
-
     for j in range(len(ListDictTile1)):
         OrdoY.insert(j,ListDictTile1[j][0])
 
@@ -78,7 +89,7 @@ def FindDictTile1(Y,Ry):
 
     for j in range(len(Y)):
         DictTile1.update({Y[j]:Ry[j]})
-
+        
     return DictTile1
 
 """

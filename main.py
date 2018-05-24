@@ -13,7 +13,7 @@ def main():
 	#variable
 	firstEvaluator = []
 	lastEvaluator = []
-	method = ["EECM", "CGM"]
+	method = ["EECM","CGM","FCGM"]
 	global zMin
 	global zMax
 

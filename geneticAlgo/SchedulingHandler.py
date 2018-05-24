@@ -7,6 +7,8 @@ import os
 
 from .CGM import *
 from .EECM import *
+from .FCGM import FCGM
+from .FECM import FECM
 
 from .XmlHandler import XmlHandler
 
@@ -80,7 +82,12 @@ class SchedulingHandler:
 
 			elif algo == "EECM":
 			    Sj, Uj, Di, Bi, Ti, Z0, Z, N, Delta = EECM(X, Y, Ry, self.alpha, self.beta, iterZ)     
-				#Sj, Uj, Di, Bi, Ti, Z, N, Delta = CGM(X,Y,Ry,self.alpha,self.beta,iterZ)
+
+			elif algo == "FCGM":
+			   fcgm = FECM( X, Y, Ry, self.alpha, self.beta, iterZ )  
+			   Z, N, T = fcgm.executeFECM()   
+
+			sys.exit(0)
 			
 			#print "1- All Outputs-ECM are (N1,Z1,Delta1) with values = ", (N1,Z1,Delta1)
 			#Step0: Det DeltaMCT

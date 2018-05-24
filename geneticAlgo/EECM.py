@@ -40,12 +40,12 @@ Step3: min Z     ---> Réutiliser le buffer de la Te x qui ne sera + utile aprè
 """
 Outputs of EECM: X,Y,Ry (Inputs) & Di,Bi,Ti,N,Z,Sj,Uj,Delta (Outputs)
 """
-def EECM(X,Y,Ry,alpha,beta, Z): 
+def EECM(X,Y,Ry,alpha,beta, targetZ): 
     # Phase 1: ECM outputs <---> N,Di,Bi0,Z0,Ti,Sj,Uj,Delta 
     Di=PrefetchTile(X,Ry)
     N=len(Di)
     Z = len(X)
-    
+
     #Phase 2
     Bi0=DestinationTile0(Di,Z)
     Ti=PrefetchStartDate(Di,alpha)
@@ -55,7 +55,9 @@ def EECM(X,Y,Ry,alpha,beta, Z):
     A=FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta)
     Z=FindBufferNumber(A)
     Bi=reduce(lambda x,y:x+y,DestinationTile(A,Z))
-   
+    
+
+
     return Sj, Uj, Di, Bi, Ti, Z, N, Delta
 
 """
@@ -225,7 +227,7 @@ def FindStartDateTs(Sj,Uj0,Uj,beta):
 
 #=======================================================================================
 # Phase 3: Optimiser Z ? ---> Idea 1
-#=======================================================================================
+#== =====================================================================================
 """
 Use the same idea as KTNS algorithm to find a Destination sequence
 
