@@ -1,11 +1,12 @@
 Coding convention
 
-- Line break after method declaration
-- Line break before and after conditional statement
+ - Line break after method declaration
+ - Line break before and after conditional statement
 	--> no line break before pass
 	--> for conditional statement longer than one line, linebreak after conditional statement condition
-- CamelCase variable
-- Space after a comma
-- space after and before equal
-- """ comment """ only for documentation
-- #comment only for annotation inside code
+ - CamelCase variable
+ - Space after a comma
+ - space after and before equal
+ - """ comment """ only for documentation
+ - #comment only for annotation inside code
+ - Symbolical variable (that are mentionned in the problem definition) are allowed to have an uppercase first later

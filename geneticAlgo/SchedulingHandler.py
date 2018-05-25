@@ -38,19 +38,11 @@ from .XmlHandler import XmlHandler
 			-Xmax	=	the maximum number of buffer that the algorythm can have (equal to the number of prefetch)		
 	"""
 class SchedulingHandler:
-
 	
-	
-	alpha = 2
-	beta = 3
+	alpha = 0
+	beta = 0
 
 	def __init__(self):
-		self.initParam()
-
-	"""
-	Retrieve parameters for the execution of the ECM and CGM algorithm
-	"""
-	def initParam(self):
 		self.alpha = int(XmlHandler.getItemFrom("mmopt","alpha"))
 		self.beta = int(XmlHandler.getItemFrom("mmopt","beta"))
 
@@ -58,6 +50,7 @@ class SchedulingHandler:
 	Execute the ECM algorythm according to the parameters
 	"""
 	def executeSchedule(self,iterZ,algo):
+		
 		StartTime=datetime.now()			
 
 		#16 is the number of images to do (numer of file in /Kernel)
@@ -85,7 +78,7 @@ class SchedulingHandler:
 
 			elif algo == "FCGM":
 			   fcgm = FECM( X, Y, Ry, self.alpha, self.beta, iterZ )  
-			   Z, N, T = fcgm.executeFECM()   
+			   Z, N, T = fcgm.executeFECM(60)   
 
 			sys.exit(0)
 			
@@ -124,14 +117,23 @@ class SchedulingHandler:
 	Retrieve the maximum and minimum number of buffer necessary for the algorithm to work on every kernel
 	"""
 	@staticmethod
-	def getBufferRange():
+	def setBufferRange():
 		allBufferRange = []
 		for k in range(16):
 			Y,Ry = SchedulingHandler.extractTiles('test_4_', k)
 			Zmin = SchedulingHandler.MinNbBuffer(Ry)
 			Zmax = SchedulingHandler.MaxBuffersNb(Ry)
 			allBufferRange.append([Zmin, Zmax])
-		return (np.amin(allBufferRange),np.amax(allBufferRange))
+			pass
+
+		minVal = 0
+		for i in range(len(allBufferRange)-1) :
+
+			if allBufferRange[i][0] > minVal:
+				minVal = allBufferRange[i][0]
+		
+		XmlHandler.setItemIn("mmopt","minBuffer",minVal)
+		XmlHandler.setItemIn("mmopt","maxBuffer",np.amax(allBufferRange))
 
 	"""
 	Find X: the input tile list  <===> len(X)=lbN
@@ -153,6 +155,7 @@ class SchedulingHandler:
 	"""
 	@staticmethod
 	def MinNbBuffer(Ry):
+
 		ListTile = []
 		
 		#ListTile = List of number of required tile for computing
@@ -162,7 +165,7 @@ class SchedulingHandler:
 			ListTile.append(len(Ry[i]))
 		
 		Zmin = max(ListTile)
-		return Zmin+1
+		return Zmin
 
 	"""
 	Find Z: the maximum number of buffer for a set of tile equal to the number of total prefetch
@@ -172,6 +175,7 @@ class SchedulingHandler:
 	"""
 	@staticmethod
 	def MaxBuffersNb(Ry):
+
 		valMax = 0
 		allNeededTile = []
 
@@ -181,7 +185,6 @@ class SchedulingHandler:
 					allNeededTile.append(x)
 		
 		Zmax = len(allNeededTile)
-
 
 		return Zmax
 

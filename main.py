@@ -22,6 +22,7 @@ def main():
 
 	# Initialize scheduler
 	scheduler = SchedulingHandler()	
+	scheduler.setBufferRange()
 
 	# Generate Population
 	pop = Population()

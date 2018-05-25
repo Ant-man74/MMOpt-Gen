@@ -38,5 +38,13 @@
 			<name>beta</name>
 			<value>1</value>
 		</param>
+		<param>
+			<name>minBuffer</name>
+			<value>0</value>
+		</param>
+		<param>
+			<name>maxBuffer</name>
+			<value>1</value>
+		</param>
 	</paramsList>
 </algoConfig>

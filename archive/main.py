@@ -42,7 +42,9 @@ def Main():
         for k in range(2):                
                 StartTime=datetime.now()
                 #Step1: Det Y,Ry,X à partir de fichier .txt        
-                Matrix0=open(os.getcwd()+'/Kernels/test_cameleon_{}.txt'.format(k),'r') #2 instances
+                #Matrix0=open(os.getcwd()+'/Kernels/test_cameleon_{}.txt'.format(k),'r') #2 instances
+                Matrix0=open(os.getcwd()+'/Kernels/test_4_{}.txt'.format(k),'r') #2 instances
+
                 #Matrix0=open('C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\Kernels\\test_fisheye_{}.txt'.format(k),'r') #3 instances
                 #Matrix0=open('C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\Kernels\\test_polaire_{}.txt'.format(k),'r') #3 instances  
                 #Matrix0=open('C:\Users\hadjsalk\Desktop\ConstructivesHeuristics\Kernels\\test_fd_{}.txt'.format(k),'r') #2 instances
@@ -61,28 +63,28 @@ def Main():
                 Z=BuffersNb(Ry)
 
                 #Step2: Det All Bounds: lbZ, lbN & lbDelta
-                print " ------ Lower Bounds of 3-PSDPP: ------"
-                lbN,lbZ,lb1Delta,lb2Delta,lb3Delta,lbDelta,lbDelta1=LowerBounds(X,Y,Ry,alpha,beta)
-                print "0- Lower Bounds are (lbN,lbZ,lbDelta) with values = ", (lbN,lbZ,lbDelta)
-                print "0- New Lower Bounds in Delta are (lb3Delta,lbDelta1) with values = ", (lb3Delta,lbDelta1)
+                #print " ------ Lower Bounds of 3-PSDPP: ------"
+               # lbN,lbZ,lb1Delta,lb2Delta,lb3Delta,lbDelta,lbDelta1=LowerBounds(X,Y,Ry,alpha,beta)
+                #print "0- Lower Bounds are (lbN,lbZ,lbDelta) with values = ", (lbN,lbZ,lbDelta)
+                #print "0- New Lower Bounds in Delta are (lb3Delta,lbDelta1) with values = ", (lb3Delta,lbDelta1)
 
                 #Step3: Apply Heuristic 1 - ECM
-                print " ------ Outputs Data of ECM: ------"
+                #print " ------ Outputs Data of ECM: ------"
                 Sj1,N1,Z1,Di1,Bi1,Ti1,Uj1,Delta1=ECM(X,Y,Ry,alpha,beta)
-                print "1- All Outputs-ECM are (N1,Z1,Delta1) with values = ", (N1,Z1,Delta1)
+               # print "1- All Outputs-ECM are (N1,Z1,Delta1) with values = ", (N1,Z1,Delta1)
 
                 #Step4: Apply Heuristic 2 -  CGM
-                print " ------ Outputs Data of CGM: ------"
-                Sj2,N2,Z2,Di2,Bi2,Ti2,Uj2,Delta2=CGM(X,Y,Ry,alpha,beta)
-                print "2- All Outputs-CGM are (N2,Z2,Delta2) with values = ", (N2,Z2,Delta2)
+               # print " ------ Outputs Data of CGM: ------"
+               # Sj2,N2,Z2,Di2,Bi2,Ti2,Uj2,Delta2=CGM(X,Y,Ry,alpha,beta)
+               # print "2- All Outputs-CGM are (N2,Z2,Delta2) with values = ", (N2,Z2,Delta2)
 
                 #Step6: Det Ratio for each Heuristics: R1,R2 & R3a,R3b,R3c
                 R1=float(Delta1)/float(lbDelta)
                 R2=float(Delta2)/float(lbDelta)
-                print "Ratio of ECM's Potential is: %.2f " % R1
-                print "Ratio of CGM's Potential is: %.2f " %  R2  
+                #print "Ratio of ECM's Potential is: %.2f " % R1
+                #print "Ratio of CGM's Potential is: %.2f " %  R2  
                 EndTime=datetime.now()
-                print('----- Duration of Execution -----:{} --- {} ===> {} '.format(StartTime, EndTime, EndTime-StartTime ))
+                #print('----- Duration of Execution -----:{} --- {} ===> {} '.format(StartTime, EndTime, EndTime-StartTime ))
 
                 #--- Find Sol  
                 elt1=lbN

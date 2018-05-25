@@ -142,6 +142,7 @@ def ComputeTile(Y,Ry,Di,Ti,alpha,beta):
     """ Dét Sj,Uj0 """
     DictAllConfigTs=FindAllConfigTs(Y,Ry,Di,Ti,alpha)
     ListAllConfigTs=sorted(DictAllConfigTs.items(),key=lambda x:x[1], reverse=False)
+    print (ListAllConfigTs)
     for j in xrange(len(ListAllConfigTs)):
         Sj.insert(j,ListAllConfigTs[j][0])
         Uj0.insert(j,ListAllConfigTs[j][1])     
@@ -149,6 +150,7 @@ def ComputeTile(Y,Ry,Di,Ti,alpha,beta):
     Uj=[Uj0[0]]
     Uj=FindStartDateTs(Sj,Uj0,Uj,beta)    
     Delta=max(Uj) + beta #  Delta=Uj[-1] +beta
+   
     return Sj,Uj,Delta
 #=================================== FindAllConfigTs() =================================
 """
@@ -159,6 +161,7 @@ def FindAllConfigTs(Y,Ry,Di,Ti,alpha):
     for j in range(len(Y)):
         ListTsDate,DictConfigTs=FindConfigTs(Y,Ry,Y[j],Di,Ti,alpha)
         DictAllConfigTs.update(DictConfigTs)
+    #print (DictAllConfigTs)
     return DictAllConfigTs
 #=================================== FindConfigTs() ====================================
 """
@@ -171,6 +174,7 @@ def FindConfigTs(Y,Ry,y,Di,Ti,alpha):
     for x in Ry[Y.index(y)]:
         ListTsDate.append(Ti[Di.index(x)])  
     DictConfigTs={y:max(ListTsDate)+alpha}
+    #print (ListTsDate)
     return ListTsDate,DictConfigTs
 #================================= FindStartDateTs() ===================================
 """

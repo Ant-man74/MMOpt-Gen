@@ -58,9 +58,27 @@ class XmlHandler:
 			print ("KeyError: Unknown dictionnary entry")
 	
 	"""
+	set an entry of the dictionnary, the item must already be known (input a blank value in the XML config file in order to make it available)
+	"""
+	@staticmethod
+	def setItemIn(dictionnary, item, value):
+
+		try:
+			if( dictionnary == "algoGen") :
+				XmlHandler.paramAlgoGen[item] = value
+			elif ( dictionnary == "mmopt" ) :
+				XmlHandler.paramMmopt[item] = value
+			else :
+				raise NameError("NameError: Unknown dictionnary")
+		except KeyError:
+			print ("KeyError: Unknown dictionnary entry") 	
+
+
+	"""
 	Print the two config dictionnaries
 	"""
 	@staticmethod
 	def printConfig():
 		print (XmlHandler.paramMmopt)
 		print (XmlHandler.paramAlgoGen) 	
+

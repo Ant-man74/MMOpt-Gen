@@ -39,6 +39,7 @@ class Individual:
 	Update an individual with a new chromosome
 	"""
 	def updateIndividual(self,newChromosome):
+
 		self.chromosome1 = newChromosome[0]
 		self.chromosome2 = newChromosome[1]
 		self.fullChromosome = [self.chromosome1,self.chromosome2]
@@ -47,6 +48,7 @@ class Individual:
 	mutate a gene on a chromosome
 	"""
 	def mutate(self):
+
 		mutate = random.randint(1,100)
 		if mutate <= self.mutationRate:
 			#select a random gene and plug in a new value
@@ -59,7 +61,9 @@ class Individual:
 	"""
 	@staticmethod
 	def genAGene(x):
-		zMin, zMax = SchedulingHandler.getBufferRange()
+
+		zMin = int(XmlHandler.getItemFrom("mmopt","minBuffer"))
+		zMax = int(XmlHandler.getItemFrom("mmopt","maxBuffer"))
 		ret = None
 		# Min max value of buffer
 		if x is 1:
@@ -83,6 +87,7 @@ class Individual:
 	Return a string formated for CSV file
 	"""
 	def printCsv(self):
+	
 		strOut = ""
 		for x in range(0,len(self.fullChromosome)):
 			strOut = strOut + ","+ str(self.fullChromosome[x]) +","
@@ -93,6 +98,7 @@ class Individual:
 	Return a string containing CSV headers for all chromosome
 	"""
 	def printHeaderCsv(self):
+
 		csvStr = ""
 		for x in range(1,len(self.fullChromosome)+1):
 			csvStr = csvStr + "Chromosome " + str(x) + ","
