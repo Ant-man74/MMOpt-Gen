@@ -9,10 +9,9 @@ Individual definition for a genetic algorythm
 """
 class Individual:
 
-	chromosome1 = None
-	chromosome2 = None
+	chromosomeLength = 6
 
-	fullChromosome = [chromosome1, chromosome2]
+	fullChromosome = [None] * chromosomeLength
 	
 	"""
 	Init and pick chromosome randomly or init a chromosome with a specific configuration if provided
@@ -20,14 +19,14 @@ class Individual:
 	def __init__(self, chrom = None):
 		# Init
 		if chrom is None: 
-			#needs to be moved to a better spot because we call him each time we create a dude despite it not moving for the whole algo
-			self.chromosome1 = Individual.genAGene(1)
-			self.chromosome2 = Individual.genAGene(2) 	
-			self.fullChromosome = [self.chromosome1,self.chromosome2]
+			for i in range(0,self.chromosomeLength):
+				self.fullChromosome[i] = Individual.genAGene(i+1)
+				pass
 		else:
-			self.chromosome1 = chrom[0]
-			self.chromosome2 = chrom[1]
-			self.fullChromosome = [self.chromosome1,self.chromosome2]
+			for i in range(0,self.chromosomeLength):
+				self.fullChromosome[i] = chrom[i]
+				pass
+
 
 	"""
 	Return the full chromosome of the Individual
@@ -39,10 +38,10 @@ class Individual:
 	Update an individual with a new chromosome
 	"""
 	def updateIndividual(self,newChromosome):
-
-		self.chromosome1 = newChromosome[0]
-		self.chromosome2 = newChromosome[1]
-		self.fullChromosome = [self.chromosome1,self.chromosome2]
+		
+		for i in range(0,self.chromosomeLength):
+				self.fullChromosome[i] = newChromosome[i]
+				pass
 
 	"""
 	mutate a gene on a chromosome
@@ -50,27 +49,47 @@ class Individual:
 	def mutate(self):
 
 		mutate = random.randint(1,100)
+		
 		if mutate <= self.mutationRate:
 			#select a random gene and plug in a new value
 			geneSelect = random.randint(0,len(fullChromosome)-1)
-			fullChromosome[geneSelect] = random.randint(1,5)
+			fullChromosome[geneSelect] = Individual.genAGene(geneSelect)
+		
 		return fullChromosome
 	
 	"""
-	generate a value for a chromosome, contain the method of generation for each gene
+	generate a value for a chromosome, contain the method of generation for each gene return None if not defined
 	"""
 	@staticmethod
 	def genAGene(x):
 
-		zMin = int(XmlHandler.getItemFrom("mmopt","minBuffer"))
-		zMax = int(XmlHandler.getItemFrom("mmopt","maxBuffer"))
+		bufferRange = list(XmlHandler.getItemFrom("mmopt","bufferRange"))
 		ret = None
+
 		# Min max value of buffer
 		if x is 1:
-			ret = random.randint(zMin,zMax)
-		# Method of scheduling EECM or CGM
+			ret = random.randint(bufferRange[0], bufferRange[1])
+		
+		# Method of scheduling (fixed to FECM for the moment)
 		elif x is 2:
-			ret = 2#random.randint(0,1) 
+			ret = 2   #random.randint(0,1)
+
+		# Foresigth max (How far should he look in the schedule to take decision)
+		elif x is 3:
+			ret = random.randint(bufferRange[0], bufferRange[1])
+
+		# TileKeeping cap (up to what tile should he try to prioritse keeping it in buffer)
+		elif x is 4:
+			ret = None
+
+		# CoefAllUse max (the coefficient for grading the score of tile to be replaced when considering total use of the tile)
+		elif x is 5:
+			ret = None
+
+		# CoefNextUse max (the coefficient for grading the score of tile to be replaced when considering when is the tile used next)
+		elif x is 6:
+			ret = None
+		
 		return ret
 
 	"""
@@ -78,9 +97,11 @@ class Individual:
 	"""
 	def __str__(self):
 		strOut = "["
-		for x in range(0,len(self.fullChromosome)):
+		
+		for x in range(0, self.chromosomeLength):
 			strOut = strOut + "\""+ str(self.fullChromosome[x]) +"\","
 		strOut = strOut[:-1] + "]"
+		
 		return strOut
 
 	"""
@@ -89,9 +110,11 @@ class Individual:
 	def printCsv(self):
 	
 		strOut = ""
-		for x in range(0,len(self.fullChromosome)):
+		
+		for x in range(0, self.chromosomeLength):
 			strOut = strOut + ","+ str(self.fullChromosome[x]) +","
 		strOut = strOut[:-1] 
+		
 		return strOut
 
 	"""
@@ -100,7 +123,9 @@ class Individual:
 	def printHeaderCsv(self):
 
 		csvStr = ""
-		for x in range(1,len(self.fullChromosome)+1):
+		
+		for x in range(1, self.chromosomeLength+1):
 			csvStr = csvStr + "Chromosome " + str(x) + ","
 			pass
+		
 		return csvStr + "\n"

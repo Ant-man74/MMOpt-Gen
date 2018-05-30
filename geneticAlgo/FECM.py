@@ -197,41 +197,40 @@ class FECM:
 				isIn = self.checkPresenceInBuffer(assignedBuffer, tileToPrefetch[j])
 				
 				if isIn == False:
+					
 					# if all the buffer are occupied
 					if len(assignedBuffer) >= self.Z:
+						
 						# determine which buffer can be overwritten and how many we will need to free
 						unnecessaryBuffer = []			
 						alreadyPresent = 0
-
+						
+						#search for all useless input tile that are in buffer and 
 						for i in range(0, len(assignedBuffer)):
-							#search for all useless input tile that are in buffer and determine how many are we missing
+
+							# determine how many are we missing and which one are useless
 							if assignedBuffer[i][1] not in tileToPrefetch:
 								unnecessaryBuffer.append(assignedBuffer[i])
 							else:
 								alreadyPresent += 1
 						
 						necessarySpace = len(tileToPrefetch) - alreadyPresent
+						#decide which tile to discard
 						bufferToReplace = self.determineDiscardTile(i, unnecessaryBuffer, inciMatrix, necessarySpace)
 						
 						for discardedBuffer in bufferToReplace:
+							
 							assignedBuffer.remove(discardedBuffer)
 							freeBuffer.append(discardedBuffer[0])
 							buffSequence.append( ("minus", discardedBuffer[0], discardedBuffer[1]) )
 							pass
 
 					#finnaly assign the buffers
-					
-
 					bufferToAssign = random.choice(freeBuffer)
 					freeBuffer.remove(bufferToAssign)
 					assignedBuffer.append( (bufferToAssign, tileToPrefetch[j]) )
 					buffSequence.append( ("add", bufferToAssign, tileToPrefetch[j]) )
 					N += 1
-
-					print (freeBuffer)
-					print (assignedBuffer)
-					print (buffSequence)
-					print ("---------------------")			
 				pass
 			pass
 
@@ -325,7 +324,7 @@ class FECM:
 				allBufferFavored = sorted(allBufferFavored, key = lambda x:x[1], reverse = True)
 				pass
 
-			# if after that step we still have enough replacement
+			# if after that step we still have enough replacement buffer to fill the necessary space
 			if len(allBufferCandidate) > necessarySpace:
 				
 				# sort by which buffer is used the soonest
@@ -333,7 +332,7 @@ class FECM:
 				# sort by which buffer is most used		
 				allBufferAllUse = sorted(allBufferCandidate, key = lambda x:x[2], reverse = True)
 				allScore = []
-				#grade all the replacement
+				#grade all the Buffer
 				for i in range(0,len(allBufferCandidate)):
 				
 					index1 = allBufferNextUse.index(allBufferCandidate[i])
@@ -351,11 +350,15 @@ class FECM:
 					pass
 
 
+			### THIS IS WTF
+			# To redo because this is a pile of burning garbage
 
-			#if there isn't enough buffer just do it with the next member of favored until there is enough
+			#if there isn't enough buffer take buffer from the favord one
 			elif len(allBufferCandidate) < necessarySpace:
-
+				#Assign buffer as long as we don't have enough
 				while len(allBufferCandidate) < necessarySpace:
+					
+
 					#if there are more than two buffer to choose from
 					if len(allBufferFavored) >= 2:
 						#if they are both used at the same time
@@ -366,6 +369,8 @@ class FECM:
 							nextBuff = allBufferFavored[0]
 					else:
 						nextBuff = allBufferFavored[0]
+
+
 					#next buff is a buffer from favoredBuffer that The algo deemed unworthy and thus is put in the trash
 					allBufferCandidate.append(nextBuff)
 					allBufferFavored.remove(nextBuff)

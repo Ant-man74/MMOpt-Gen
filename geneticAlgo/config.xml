@@ -39,12 +39,26 @@
 			<value>1</value>
 		</param>
 		<param>
-			<name>minBuffer</name>
-			<value>0</value>
+			<name>bufferRange</name>
+			<value>0 ; 1</value>
+		</param>
+		<!-- These parameter migth need to be calculated duriong runtime-->
+		<param>
+			<name>foresigthRange</name>
+			<value>10 ; 50</value>
 		</param>
 		<param>
-			<name>maxBuffer</name>
-			<value>1</value>
+			<name>tileKeepingRange</name>
+			<value>0 ; 10</value>
 		</param>
+		<param>
+			<name>coefAllUseRange</name>
+			<value>1 ; 10</value>
+		</param>
+		<param>
+			<name>coefNextUseRange</name>
+			<value>1 ; 10</value>
+		</param>
+		
 	</paramsList>
 </algoConfig>

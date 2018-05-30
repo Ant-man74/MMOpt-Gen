@@ -32,11 +32,16 @@ class XmlHandler:
 		for categories in self.treeConfig.iter('paramsList'):
 			id = categories.get("id")
 			for param in categories.iter('param'):
-				if( id == "algoGen" ) :
-					XmlHandler.paramAlgoGen[param.find('name').text] = param.find('value').text
-				elif(id == "mmopt" ) :
-					XmlHandler.paramMmopt[param.find('name').text] = param.find('value').text
-			pass
+				if id == "algoGen":
+					if param.find('value').text.find(";") == -1:
+						XmlHandler.paramAlgoGen[param.find('name').text] = param.find('value').text
+					else:
+						XmlHandler.paramAlgoGen[param.find('name').text] = param.find('value').text.split(";")
+				elif id == "mmopt":
+					if param.find('value').text.find(";") == -1:
+						XmlHandler.paramMmopt[param.find('name').text] = param.find('value').text
+					else:
+						XmlHandler.paramMmopt[param.find('name').text] = param.find('value').text.split(";")
 		pass
 
 	"""
@@ -47,9 +52,9 @@ class XmlHandler:
 	def getItemFrom(dictionnary, item):
 		ret = 0
 		try:
-			if( dictionnary == "algoGen") :
+			if dictionnary == "algoGen":
 				ret = XmlHandler.paramAlgoGen[item]
-			elif ( dictionnary == "mmopt" ) :
+			elif dictionnary == "mmopt":
 				ret = XmlHandler.paramMmopt[item]
 			else :
 				raise NameError("NameError: Unknown dictionnary")
@@ -64,9 +69,9 @@ class XmlHandler:
 	def setItemIn(dictionnary, item, value):
 
 		try:
-			if( dictionnary == "algoGen") :
+			if dictionnary == "algoGen":
 				XmlHandler.paramAlgoGen[item] = value
-			elif ( dictionnary == "mmopt" ) :
+			elif dictionnary == "mmopt":
 				XmlHandler.paramMmopt[item] = value
 			else :
 				raise NameError("NameError: Unknown dictionnary")
