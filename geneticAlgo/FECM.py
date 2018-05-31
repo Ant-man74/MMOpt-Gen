@@ -37,8 +37,7 @@ class FECM:
 	beta = 0		# Time for a computation
 	xForYList = []	# List with ( output tile number : list of input tile necessary )
 
-	def __init__(self, X, Y, Ry, alpha, beta, Z):
-
+	def __init__(self, X, Y, Ry, alpha, beta, individual):
 		self.X = X
 		self.Y = Y
 		self.Ry = Ry
@@ -46,11 +45,11 @@ class FECM:
 		self.beta = beta	
 		self.xForYList = self.xForYList(self.Y, self.Ry)
 
-		self.Z = 4
-		self.geneForesigthMax = 10
-		self.geneSelfKeeping = 5
-		self.geneCoefAllUse = 1
-		self.geneCoefNextUse = 1.5
+		self.Z = individual[0]
+		self.geneForesigthMax = individual[2]
+		self.geneSelfKeeping = individual[3]
+		self.geneCoefAllUse = individual[4]
+		self.geneCoefNextUse = individual[5]
 
 
 
@@ -66,10 +65,11 @@ class FECM:
 		xForYList = sorted(xForYList, key = lambda x:x[0])
 		return xForYList
 
+	
 	"""
 	Outputs of CGM: N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs) Main loop
 	"""
-	def executeFECM(self, varPercent):
+	def executeFECM(self):
 		
 		Di = self.mostCommonPrefetch(self.X, self.Ry)
 		Ti = self.prefetchStartDate(Di)
@@ -81,23 +81,11 @@ class FECM:
 		#	print (t)
 
 		Bi, N = self.bufferAssignementSchedule(inciMatrix, Sj, self.xForYList)
-		print (Bi)
-		print (N)
-
-		#Phase 2
-		#Bi0 = self.computePrefetchSchedule(Di, self.Z, self.Y, varPercent)
-		#Ti=self.PrefetchStartDate(Di,alpha)
-		#Sj,Uj,Delta=ComputeTile(Y,Ry,Di,Ti,alpha,beta) 
 		
-		""" Phase 3: min Z (based on KTNS's Idea) """
-		"""
-		A=FindIncidenceMatrix(Di,Ti,Sj,Uj,Y,Ry,beta)
-		Z=FindBufferNumber(A)
-		Bi=reduce(lambda x,y:x+y,DestinationTile(A,Z))
-	
-		"""
+		Ti = self.prefetchStartDatePostReassign(Bi)
+		Uj, Delta = self.computePostReassign(Bi,Ti)
 
-		return 0, 0, 0
+		return self.Z, N, Delta
 
 	"""
 	List of the most commonly used input tile (sorted from most used to least used)
@@ -122,11 +110,11 @@ class FECM:
 	""" 
 	def prefetchStartDate(self, Di):
 		
-	    Ti=[1]
-	    for i in range(1, len(Di)):
-	        Ti.insert(i,Ti[i-1] + self.alpha)
+		Ti=[1]
+		for i in range(1, len(Di)):
+			Ti.insert(i,Ti[i-1] + self.alpha)
 
-	    return Ti
+		return Ti
  
 	"""
 	Dét Sj  Computations Schedule old code I'm not 100% sure
@@ -379,3 +367,24 @@ class FECM:
 			bufferToReplace = [statsBuffer[0] for statsBuffer in allBufferCandidate]
 
 		return bufferToReplace
+
+	"""
+	Dét Ti: la sequence de Start Date correspondante à la liste Bi
+	""" 
+	def prefetchStartDatePostReassign(self, Bi):
+		
+		Ti = [1]
+		#ugly fix for the moment
+		decalage = 0
+		for i in range(1, len(Bi)):
+			
+			if Bi[i-1][0] != "minus":
+				Ti.insert(i, Ti[i-1-decalage] + self.alpha)
+			else:
+				decalage += 1
+		return Ti
+
+	def computePostReassign(self, Bi, Ti):
+		Uj = 0
+		Delta = 0
+		return Uj, Delta

@@ -4,8 +4,6 @@ from geneticAlgo.Population import Population
 from geneticAlgo.Reproduction import Reproduction
 from geneticAlgo.SchedulingHandler import SchedulingHandler
 from geneticAlgo.XmlHandler import XmlHandler
-from geneticAlgo.ConstraintHandler import ConstraintHandler
-
 
 import sys
 import copy
@@ -15,13 +13,17 @@ def main():
 	#variable
 	firstEvaluator = []
 	lastEvaluator = []
-	method = ["EECM","CGM","FECM"]
-	
-	# Handle config and initialize constraints
+
+	global zMin
+	global zMax
+
+	# Handle config
 	xmlHandler = XmlHandler()
-	constraintHandler = ConstraintHandler()
+
+	# Initialize scheduler
 	scheduler = SchedulingHandler()	
-	
+	scheduler.setBufferRange()
+
 	# Generate Population
 	pop = Population()
 	pop.generatePop()
@@ -36,7 +38,7 @@ def main():
 		for y in range(0,len(pop.currentPopulation)):
 
 			#to change method change the method array and number def in Individual
-			(Z,N,T) = scheduler.executeSchedule(method[pop.currentPopulation[y].fullChromosome[1]], pop.currentPopulation[y].fullChromosome)
+			(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[1], pop.currentPopulation[y].fullChromosome)
 			
 			result.append([pop.currentPopulation[y],(Z,N,T)]);
 			pass
