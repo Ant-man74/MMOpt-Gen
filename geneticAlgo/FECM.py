@@ -77,15 +77,12 @@ class FECM:
 
 		inciMatrix = self.buildIncidenceMatrix(Di, self.Ry, Sj)
 		
-		#for t in RyMatrix:
-		#	print (t)
-
-		Bi, N = self.bufferAssignementSchedule(inciMatrix, Sj, self.xForYList)
+		Bi, N, Uj0 = self.bufferAssignementSchedule(inciMatrix, Sj, self.xForYList)
 		
-		Ti = self.prefetchStartDatePostReassign(Bi)
-		Uj, Delta = self.computePostReassign(Bi,Ti)
+		Uj = self.findStartDateTs(Uj0, self.beta)
+		delta = max(Uj) + self.beta
 
-		return self.Z, N, Delta
+		return self.Z, N, delta
 
 	"""
 	List of the most commonly used input tile (sorted from most used to least used)
@@ -173,9 +170,11 @@ class FECM:
 		assignedBuffer = []						# assigned buffer, list of tuple (bufferNb, inputTileNb)
 		buffSequence = [] 						# all buffer operation, list of tuple (add/minus, bufferNb, inputTileNb)	
 		N = 0									# the total number of preftch
+		Uj0 = []								#the time at which each output tile can be computed at the earliest
+		test =[]
 		# for each output tile to load
 		for i in range(0,len(self.Y)):
-			
+
 			# array of the input tile necessary for this row (Sj[i] == the number of the output tile we want the input tile of)
 			tileToPrefetch = xForYList[ Sj[i] ][1]
 
@@ -194,13 +193,14 @@ class FECM:
 						alreadyPresent = 0
 						
 						#search for all useless input tile that are in buffer and 
-						for i in range(0, len(assignedBuffer)):
+						for k in range(0, len(assignedBuffer)):
 
 							# determine how many are we missing and which one are useless
-							if assignedBuffer[i][1] not in tileToPrefetch:
-								unnecessaryBuffer.append(assignedBuffer[i])
+							if assignedBuffer[k][1] not in tileToPrefetch:
+								unnecessaryBuffer.append(assignedBuffer[k])
 							else:
 								alreadyPresent += 1
+							pass
 						
 						necessarySpace = len(tileToPrefetch) - alreadyPresent
 						#decide which tile to discard
@@ -220,9 +220,10 @@ class FECM:
 					buffSequence.append( ("add", bufferToAssign, tileToPrefetch[j]) )
 					N += 1
 				pass
+			Uj0.append( self.prefetchComputationStartDate(Uj0, N, self.alpha) )
 			pass
 
-		return buffSequence, N
+		return buffSequence, N, Uj0
 
 
 	"""
@@ -325,15 +326,14 @@ class FECM:
 				
 					index1 = allBufferNextUse.index(allBufferCandidate[i])
 					index2 = allBufferAllUse.index(allBufferCandidate[i])
-
-					scoreNextUse = ( index1 / len(allBufferNextUse) ) * allBufferNextUse
+					scoreNextUse = ( index1 / len(allBufferNextUse) ) * geneCoefNextUse
 					scoreAllUse = ( index1 / len(allBufferAllUse) ) * geneCoefAllUse
 					allScore.append( (allBufferCandidate[i], scoreAllUse + scoreNextUse) )
 					pass
 				
 				allScore = sorted(allScore, key = lambda x:x[1])
 				
-				while allBufferCandidate < necessarySpace:
+				while len(allBufferCandidate) < necessarySpace:
 					allBufferCandidate.append(pop(allScore[0]))
 					pass
 
@@ -369,22 +369,52 @@ class FECM:
 		return bufferToReplace
 
 	"""
-	Dét Ti: la sequence de Start Date correspondante à la liste Bi
+	Dét Ti: Start date sequence for Bi, unused for the moment
 	""" 
-	def prefetchStartDatePostReassign(self, Bi):
+	def prefetchStartDatePostReassign(self, Bi, alpha):
 		
 		Ti = [1]
-		#ugly fix for the moment
 		decalage = 0
+		
 		for i in range(1, len(Bi)):
-			
+
 			if Bi[i-1][0] != "minus":
-				Ti.insert(i, Ti[i-1-decalage] + self.alpha)
+				Ti.insert(i,Ti[i-decalage-1] + alpha)
 			else:
-				decalage += 1
+				decalage += 1		
+
 		return Ti
 
-	def computePostReassign(self, Bi, Ti):
-		Uj = 0
-		Delta = 0
-		return Uj, Delta
+	"""
+	Dét timeForCompute: Time where a sequence of prefetch has finished and a computation could be done
+	""" 
+	def prefetchComputationStartDate(self, Uj0, N, alpha):
+		
+		if len(Uj0) != 0:
+			timeForCompute = Uj0[len(Uj0)-1]
+		else:
+			timeForCompute = 0
+		
+		for i in range(len(Uj0), N):
+			timeForCompute += alpha
+
+		return timeForCompute
+
+
+	"""
+	Dét StartDateList: pour tte les Ts ds Sc en garantissant pas de chevauchement entre calculs 
+	"""
+	def findStartDateTs(Sj, Uj0, beta):
+		#first tile that can be computed
+		Uj=[Uj0[0]]   
+		
+		#for each computation
+		for j in range(1,len(Uj0)):
+
+			# if the computation can be done without overlap add them to the array of the computation timing
+			if Uj0[j]-Uj[j-1] >= beta:
+				Uj.insert(j,Uj0[j])
+			# if there is an overlap add a delay of computation to the previous step
+			else:
+				Uj.insert(j,Uj[j-1]+beta)
+		return Uj

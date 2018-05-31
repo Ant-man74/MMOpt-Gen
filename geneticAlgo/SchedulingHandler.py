@@ -39,13 +39,7 @@ class SchedulingHandler:
 			#0 is ECM
 			if algo == 0:
 			   fecm = FECM( X, Y, Ry, self.alpha, self.beta, individual )  
-			   Z, N, T = fecm.executeFECM()   
-			print(Z)
-			print(N)
-			print(T)
-
-			sys.exit(0)
-			
+			   Z, N, T = fecm.executeFECM()   			
 			
 		EndTime = datetime.now()
 

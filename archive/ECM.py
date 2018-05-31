@@ -142,15 +142,22 @@ def ComputeTile(Y,Ry,Di,Ti,alpha,beta):
     """ Dét Sj,Uj0 """
     DictAllConfigTs=FindAllConfigTs(Y,Ry,Di,Ti,alpha)
     ListAllConfigTs=sorted(DictAllConfigTs.items(),key=lambda x:x[1], reverse=False)
-    print (ListAllConfigTs)
+
     for j in xrange(len(ListAllConfigTs)):
         Sj.insert(j,ListAllConfigTs[j][0])
         Uj0.insert(j,ListAllConfigTs[j][1])     
     """ Dét Uj, Delta"""
-    Uj=[Uj0[0]]
+    print "-----------"
+    print Uj0
+    print "-----------"
+
+    Uj=[Uj0[0]]   
     Uj=FindStartDateTs(Sj,Uj0,Uj,beta)    
+    
+    print Uj
+    
     Delta=max(Uj) + beta #  Delta=Uj[-1] +beta
-   
+    print Delta
     return Sj,Uj,Delta
 #=================================== FindAllConfigTs() =================================
 """
@@ -172,15 +179,17 @@ Dét ListTsDate,DictConfigTs: la configuration de chaque Ts où
 def FindConfigTs(Y,Ry,y,Di,Ti,alpha):
     ListTsDate=[]
     for x in Ry[Y.index(y)]:
+        print(Di.index(x))
         ListTsDate.append(Ti[Di.index(x)])  
     DictConfigTs={y:max(ListTsDate)+alpha}
+    print(DictConfigTs)
     #print (ListTsDate)
     return ListTsDate,DictConfigTs
 #================================= FindStartDateTs() ===================================
 """
 Dét StartDateList: pour tte les Ts ds Sc en garantissant pas de chevauchement entre calculs 
 """
-def FindStartDateTs(Sj,Uj0,Uj,beta):    
+def FindStartDateTs(Sj,Uj0,Uj,beta):
     for j in xrange(1,len(Uj0)):
         if Uj0[j]-Uj[j-1] >= beta:
             Uj.insert(j,Uj0[j])

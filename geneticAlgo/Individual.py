@@ -83,17 +83,17 @@ class Individual:
 		elif x is 3:
 			ret = random.randint(foresigthRange[0], foresigthRange[1])
 		
-		#keepTile
+		#tileKeeping
 		elif x is 4:
 			ret = random.randint(tileKeepingRange[0], tileKeepingRange[1]) 
 		
-		#coefCloseTile
+		#coefNextUse
 		elif x is 5:
-			ret = random.randint(coefNextUseRange[0], coefNextUseRange[1]) 
+			ret = (random.randint(coefNextUseRange[0], coefNextUseRange[1]) / 10) + 1
 
-		#coefAllTile
+		#coefAllUse
 		elif x is 6:
-			ret = random.randint(coefAllUseRange[0], coefAllUseRange[1]) 
+			ret = (random.randint(coefAllUseRange[0], coefAllUseRange[1]) / 10) + 1
 
 		return ret
 
