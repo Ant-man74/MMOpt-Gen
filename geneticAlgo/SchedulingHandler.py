@@ -29,21 +29,20 @@ class SchedulingHandler:
 	def executeSchedule(self, algo, individual):
 		
 		StartTime=datetime.now()			
-		
+		Z, N, T = 0, 0, 0
 		#16 is the number of images to do (numer of file in /Kernel)
-		for k in range(16):
+		#for k in range(1):
+		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
+		X = SchedulingHandler.InputTile(Ry)
 
-			Y,Ry = SchedulingHandler.extractTiles('test_4_',k)
-			X = SchedulingHandler.InputTile(Ry)
-
-			#0 is ECM
-			if algo == 0:
-			   fecm = FECM( X, Y, Ry, self.alpha, self.beta, individual )  
-			   Z, N, T = fecm.executeFECM()   			
+		#0 is ECM
+		if algo == 0:
+		   fecm = FECM( X, Y, Ry, self.alpha, self.beta, individual )  
+		   Z, N, T = fecm.executeFECM()   			
 			
 		EndTime = datetime.now()
 
-		return Z, N, EndTime-StartTime
+		return Z, N, T
 
 	"""
 	Extract the data from the file "filename" for the "k" file
@@ -69,20 +68,20 @@ class SchedulingHandler:
 	@staticmethod
 	def setBufferRange():
 		allBufferRange = []
-		for k in range(16):
-			Y,Ry = SchedulingHandler.extractTiles('test_4_', k)
-			Zmin = SchedulingHandler.MinNbBuffer(Ry)
-			Zmax = SchedulingHandler.MaxBuffersNb(Ry)
-			allBufferRange.append([Zmin, Zmax])
-			pass
+		#for k in range(16):
+		Y,Ry = SchedulingHandler.extractTiles('test_4_', 15)
+		Zmin = SchedulingHandler.MinNbBuffer(Ry)
+		Zmax = SchedulingHandler.MaxBuffersNb(Ry)
+		allBufferRange.append([Zmin, Zmax])
+			#pass
 
-		minVal = 0
-		for i in range(len(allBufferRange)-1) :
+		#minVal = 0
+		#for i in range(len(allBufferRange)-1) :
 
-			if allBufferRange[i][0] > minVal:
-				minVal = allBufferRange[i][0]
-		
-		XmlHandler.setItemIn("mmopt","bufferRange",[minVal, np.amax(allBufferRange)])
+		#	if allBufferRange[i][0] > minVal:
+		#		minVal = allBufferRange[i][0]
+
+		XmlHandler.setItemIn("mmopt","bufferRange",[Zmin,Zmax])
 
 	"""
 	Find X: the input tile list  <===> len(X)=lbN

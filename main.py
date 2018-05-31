@@ -39,7 +39,7 @@ def main():
 
 			#to change method change the method array and number def in Individual
 			(Z,N,T) = scheduler.executeSchedule(pop.currentPopulation[y].fullChromosome[1], pop.currentPopulation[y].fullChromosome)
-			
+
 			result.append([pop.currentPopulation[y],(Z,N,T)]);
 			pass
 
@@ -66,8 +66,8 @@ def main():
 		pass
 
 	#print(firstPop)
-	#print(lastPop)
-	print(firstEvaluator.printAllCurrentResult())
+	#print(lastEvaluator)
+	#print(firstEvaluator.printAllCurrentResult())
 	print(lastEvaluator.printAllCurrentResult())
 
 if __name__ == "__main__":

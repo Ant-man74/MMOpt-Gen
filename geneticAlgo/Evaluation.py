@@ -73,12 +73,12 @@ class Evaluation:
 	print all current result and their associated Individual in a string formated for CSV output
 	"""
 	def printAllCurrentResult(self):
-
+		
 		headerResult = "\nBuffer Number (Z), PreFetch Number(N), Time (T), "
 		fullStr = headerResult + self.result[0][0].printHeaderCsv() + ""
 
 		for x in range(0,len(self.result)):
-			res = self.printAResult(x) + " , " + self.result[x][0].printCsv() + ""
+			res = self.printAResult(x) + " " + self.result[x][0].printCsv() + ""
 			fullStr = fullStr + res + "\n"
 			pass
 

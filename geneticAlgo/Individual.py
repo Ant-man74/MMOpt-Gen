@@ -8,16 +8,15 @@ import random
 Individual definition for a genetic algorythm
 """
 class Individual:
-
-	chromosomeLength = 6
-
-	#Multiply by chromosome length
-	fullChromosome = [None] * 6
-		
+	
+	chromosomeLength 	= 6
+	
 	"""
 	Init and pick chromosome randomly or init a chromosome with a specific configuration if provided
 	"""
 	def __init__(self, chrom = None):
+
+		self.fullChromosome = [None] * self.chromosomeLength
 		# Init
 		if chrom is None: 
 			for i in range(0,self.chromosomeLength):
@@ -39,7 +38,7 @@ class Individual:
 	Update an individual with a new chromosome
 	"""
 	def updateIndividual(self,newChromosome):
-		
+
 		for i in range(0,self.chromosomeLength):
 				self.fullChromosome[i] = newChromosome[i]
 				pass
@@ -51,12 +50,12 @@ class Individual:
 
 		mutate = random.randint(1,100)
 		
-		if mutate <= self.mutationRate:
+		if mutate <= int(XmlHandler.getItemFrom("algoGen","mutationRate")):
 			#select a random gene and plug in a new value
-			geneSelect = random.randint(0, self.chromosomeLength)
-			fullChromosome[geneSelect] = Individual.genAGene(geneSelect)
+			geneSelect = random.randint(1, self.chromosomeLength)
+			self.fullChromosome[geneSelect-1] = Individual.genAGene(geneSelect)
 		
-		return fullChromosome
+		return self.fullChromosome
 	
 	"""
 	generate a value for a chromosome, contain the method of generation for each gene return None if not defined
@@ -69,8 +68,8 @@ class Individual:
 		tileKeepingRange 	= 	list(map(int, XmlHandler.getItemFrom("mmopt","tileKeepingRange")))
 		coefNextUseRange 	= 	list(map(int, XmlHandler.getItemFrom("mmopt","coefNextUseRange")))
 		coefAllUseRange 	= 	list(map(int, XmlHandler.getItemFrom("mmopt","coefAllUseRange")))
-
 		ret = None
+		
 		# Min max value of buffer
 		if x is 1:
 			ret = random.randint(zRange[0], zRange[1])
@@ -117,7 +116,7 @@ class Individual:
 		strOut = ""
 		
 		for x in range(0, self.chromosomeLength):
-			strOut = strOut + ","+ str(self.fullChromosome[x]) +","
+			strOut = strOut + ","+ str(self.fullChromosome[x])
 		strOut = strOut[:-1] 
 		
 		return strOut

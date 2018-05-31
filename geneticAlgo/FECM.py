@@ -44,7 +44,7 @@ class FECM:
 		self.alpha = alpha
 		self.beta = beta	
 		self.xForYList = self.xForYList(self.Y, self.Ry)
-
+		
 		self.Z = individual[0]
 		self.geneForesigthMax = individual[2]
 		self.geneSelfKeeping = individual[3]
@@ -70,7 +70,6 @@ class FECM:
 	Outputs of CGM: N,Z,Di,Bi,Sj,Ti,Uj,Delta (Outputs) Main loop
 	"""
 	def executeFECM(self):
-		
 		Di = self.mostCommonPrefetch(self.X, self.Ry)
 		Ti = self.prefetchStartDate(Di)
 		Sj = self.computeTile(self.Y, self.Ry, Di, Ti)
