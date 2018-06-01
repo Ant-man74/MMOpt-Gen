@@ -4,6 +4,7 @@ from geneticAlgo.Population import Population
 from geneticAlgo.Reproduction import Reproduction
 from geneticAlgo.SchedulingHandler import SchedulingHandler
 from geneticAlgo.XmlHandler import XmlHandler
+from geneticAlgo.ReportGenerator import ReportGenerator
 
 import sys
 import copy
@@ -64,11 +65,32 @@ def main():
 		sys.stdout.write("Finished tour "+ str(x) +"/"+ maxTour)
 		
 		pass
+	sys.stdout.write("\n")
 
 	#print(firstPop)
 	#print(lastEvaluator)
 	#print(firstEvaluator.printAllCurrentResult())
-	print(lastEvaluator.printAllCurrentResult())
+	generator = ReportGenerator()
+
+	list1a, list2a = firstEvaluator.getCoupleList("buffer",2)
+	list3a, list4a = firstEvaluator.getCoupleList("buffer","delta")
+
+	list1b, list2b = lastEvaluator.getCoupleList("buffer",2)
+	list3b, list4b = lastEvaluator.getCoupleList("buffer","delta")
+
+	generator.generateAGraph(("buffer", list1a), ("foresigth",list2a), 0)
+	generator.generateAGraph(("buffer", list1b), ("foresigth",list2b), 0)
+
+	generator.showPlot("bufferXprefetch")
+
+	generator.generateAGraph(("buffer", list3a), ("delta",list4a), 0)
+	generator.generateAGraph(("buffer", list3b), ("delta",list4b), 0)
+
+	generator.showPlot("bufferXDelta")
+
+
+	generator.printResultToFile(firstEvaluator.getAllCurrentResult(),"filefirstEvaluator")
+	generator.printResultToFile(lastEvaluator.getAllCurrentResult(),"filelastEvaluator")
 
 if __name__ == "__main__":
 	main()

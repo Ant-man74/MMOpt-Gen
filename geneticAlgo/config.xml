@@ -4,11 +4,11 @@
 		
 		<param>
 			<name>popSize</name>
-			<value>50</value>
+			<value>100</value>
 		</param>
 		<param>
 			<name>mutationRate</name>
-			<value>10</value>
+			<value>5</value>
 		</param>
 		<param>
 			<name>crossOverRate</name>
@@ -24,7 +24,7 @@
 		</param>
 		<param>
 			<name>maxTour</name>
-			<value>50</value>
+			<value>500</value>
 		</param>
 	</paramsList>
 	
@@ -38,23 +38,28 @@
 			<name>beta</name>
 			<value>1</value>
 		</param>
+		<!-- Gene 0 -->
 		<param>
 			<name>bufferRange</name>
 			<value>0 ; 1</value>
 		</param>
 		<!-- These parameter migth need to be calculated duriong runtime-->
+		<!-- Gene  2-->
 		<param>
 			<name>foresigthRange</name>
-			<value>10 ; 50</value>
+			<value>10; 15</value>
 		</param>
+		<!-- Gene  3-->
 		<param>
 			<name>tileKeepingRange</name>
 			<value>0 ; 10</value>
 		</param>
+		<!-- Gene  4-->
 		<param>
 			<name>coefAllUseRange</name>
-			<value>1 ; 10</value>
+			<value>1 ; 20</value>
 		</param>
+		<!-- Gene  5-->
 		<param>
 			<name>coefNextUseRange</name>
 			<value>1 ; 10</value>

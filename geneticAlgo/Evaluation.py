@@ -41,10 +41,10 @@ class Evaluation:
 			buff2, N2, T2 = self.result[pick2][1]
 
 			#if an individual is absolutly better than the other select him otherwise add them both, will need revision
-			if buff1 < buff2 and T1 < T2:
+			if buff1 < buff2 and T1 < T2 and N1 < N2:
 				newPopulation.addIndividual(self.result[pick1][0])
 				indToAdd = indToAdd + 1
-			elif buff1 < buff2 and T1 > T2:
+			elif buff1 < buff2 and T1 > T2  and N1 > N2:
 				newPopulation.addIndividual(self.result[pick2][0])
 				indToAdd = indToAdd + 1
 			else:
@@ -64,7 +64,7 @@ class Evaluation:
 	"""
 	return a result "B, N, T" under a string format
 	"""
-	def printAResult(self,x):
+	def getAResult(self,x):
 
 		buff, prefetch , t = self.result[x][1]
 		return str(buff) + ", " + str(prefetch) + ", " + str(t)
@@ -72,17 +72,34 @@ class Evaluation:
 	"""
 	print all current result and their associated Individual in a string formated for CSV output
 	"""
-	def printAllCurrentResult(self):
+	def getAllCurrentResult(self):
 		
 		headerResult = "\nBuffer Number (Z), PreFetch Number(N), Time (T), "
-		fullStr = headerResult + self.result[0][0].printHeaderCsv() + ""
+		fullStr = headerResult + self.result[0][0].getHeaderCsv() + ""
 
 		for x in range(0,len(self.result)):
-			res = self.printAResult(x) + " " + self.result[x][0].printCsv() + ""
+			res = self.getAResult(x) + " " + self.result[x][0].getCsv() + ""
 			fullStr = fullStr + res + "\n"
 			pass
 
 		return fullStr
 
+	"""
+	result is a list of tuple with ( (buff, prefetch, t), Individual )
+	"""
+	def getCoupleList(self, criteria1, criteria2):
 
-			
+		existingCriteria = ["buffer", "prefetch", "delta"]
+
+		if isinstance(criteria1, str):
+			list1 = [oneResult[1][existingCriteria.index(criteria1)] for oneResult in self.result]
+		else:
+			list1 = [oneResult[0].fullChromosome[criteria1] for oneResult in self.result]
+
+
+		if isinstance(criteria2, str):
+			list2 = [oneResult[1][existingCriteria.index(criteria2)] for oneResult in self.result]
+		else:
+			list2 = [oneResult[0].fullChromosome[criteria2] for oneResult in self.result]
+
+		return list1, list2

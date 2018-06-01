@@ -111,7 +111,7 @@ class Individual:
 	"""
 	Return a string formated for CSV file
 	"""
-	def printCsv(self):
+	def getCsv(self):
 	
 		strOut = ""
 		
@@ -124,7 +124,7 @@ class Individual:
 	"""
 	Return a string containing CSV headers for all chromosome
 	"""
-	def printHeaderCsv(self):
+	def getHeaderCsv(self):
 
 		csvStr = ""
 		
