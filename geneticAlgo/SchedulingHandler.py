@@ -30,7 +30,7 @@ class SchedulingHandler:
 		Z, N, T = 0, 0, 0
 		#16 is the number of images to do (numer of file in /Kernel)
 		#for k in range(1):
-		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
+		Y,Ry = SchedulingHandler.extractTiles('test_fisheye_',0)
 		X = SchedulingHandler.InputTile(Ry)
 
 		#0 is ECM
@@ -66,7 +66,7 @@ class SchedulingHandler:
 	def setBufferRange():
 		allBufferRange = []
 		#for k in range(16):
-		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
+		Y,Ry = SchedulingHandler.extractTiles('test_fisheye_',0)
 		Zmin = SchedulingHandler.MinNbBuffer(Ry)
 		Zmax = SchedulingHandler.MaxBuffersNb(Ry)
 		allBufferRange.append([Zmin, Zmax])

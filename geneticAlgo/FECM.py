@@ -134,8 +134,12 @@ class FECM:
 	Build a 0, 1 incidence matrix for the input, output tile
 	"""
 	def buildIncidenceMatrix(self, Di, Ry, Sj = None):
-
+		
+		# we need to know which inputTiles are related to which output tile for non linearity support
+		# this wasn't available in Ry 
+		allYForIndex = [inputListForY[0] for inputListForY in self.xForYList]
 		inciMatrix = []
+
 		for i in range(len(Di)):
 
 			inciMatrix.append( (Di[i],np.zeros(len(Ry))) )
@@ -148,9 +152,9 @@ class FECM:
 					pass
 				pass
 			else:
-				for j in range(len(Ry)):
-					# (Sj[i] == the number of the output tile			
-					if Di[i] in Ry[ Sj[j] ]:
+				for j in range(len(self.xForYList)):					
+					# allYForIndex.index(Sj[j]) = index of tuple (Y,inputTile)			
+					if Di[i] in self.xForYList[allYForIndex.index(Sj[j])][1] :
 						inciMatrix[i][1][j] = 1
 					pass
 				pass
@@ -168,11 +172,14 @@ class FECM:
 		N = 0									# the total number of preftch
 		Uj0 = []								#the time at which each output tile can be computed at the earliest
 		test =[]
+		# we need to know which inputTiles are related to which output tile for non linearity support
+		allYForIndex = [inputListForY[0] for inputListForY in self.xForYList]  
+		
 		# for each output tile to load
 		for i in range(0,len(self.Y)):
 
 			# array of the input tile necessary for this row (Sj[i] == the number of the output tile we want the input tile of)
-			tileToPrefetch = xForYList[ Sj[i] ][1]
+			tileToPrefetch = xForYList[ allYForIndex.index(Sj[i]) ][1]
 
 			#for each tile to prefetch
 			for j in range(0,len(tileToPrefetch)):
@@ -208,7 +215,7 @@ class FECM:
 							buffSequence.append( ("minus", discardedBuffer[0], discardedBuffer[1]) )
 							pass
 
-					#finnaly assign the buffers
+					#finaly assign the buffers
 					bufferToAssign = random.choice(freeBuffer)
 					freeBuffer.remove(bufferToAssign)
 					assignedBuffer.append( (bufferToAssign, tileToPrefetch[j]) )
@@ -247,8 +254,9 @@ class FECM:
 		allStatBuffer = []
 
 		for i in range(0,len(unnecessaryBuffer)):
-			
+			# get this input tile row, unnecessaryBuffer[i][1] => the input tile in this buffer currently
 			tileRow = outputTileList.index(unnecessaryBuffer[i][1])
+			# generate stats
 			stepUntilNextUse, amountOfTimeUsed = self.analyzeRow(inciMatrix[tileRow][1], currentY)
 			allStatBuffer.append( (unnecessaryBuffer[i], stepUntilNextUse, amountOfTimeUsed) )
 			pass

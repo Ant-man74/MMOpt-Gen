@@ -29,7 +29,13 @@ Ry = [[6, 0],
 
 	#sort decroissant des output tile suivant le plus de input tile nécaissaire
 	OrdoY = [2, 4, 6, 3, 7, 9, 0, 1, 5, 8]
+	
+	matrix = np.zeros((len(Ry),len(Sj)))
+	inciMatrix = []
+	for j in range(len(Sj)):
+		for	inputTile in self.xForYList[allYForIndex.index(Sj[j])][1]:
 
+			pass
 
 	 5  0  8  2  4  9  1  7  3  4
 
