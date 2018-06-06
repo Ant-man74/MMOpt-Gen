@@ -23,14 +23,14 @@ class SchedulingHandler:
 
 	"""
 	Execute the ECM algorythm according to the parameters
-	For now change the kernel manualy
+	For now change the kernel manualy To have it work with all kernel uncomment the loop but beware it won't work as intended
 	"""
 	def executeSchedule(self, algo, individual):
 
 		Z, N, T = 0, 0, 0
 		#16 is the number of images to do (numer of file in /Kernel)
-		#for k in range(1):
-		Y,Ry = SchedulingHandler.extractTiles('test_fisheye_',0)
+		#for k in range(16):
+		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
 		X = SchedulingHandler.InputTile(Ry)
 
 		#0 is ECM
@@ -66,7 +66,7 @@ class SchedulingHandler:
 	def setBufferRange():
 		allBufferRange = []
 		#for k in range(16):
-		Y,Ry = SchedulingHandler.extractTiles('test_fisheye_',0)
+		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
 		Zmin = SchedulingHandler.MinNbBuffer(Ry)
 		Zmax = SchedulingHandler.MaxBuffersNb(Ry)
 		allBufferRange.append([Zmin, Zmax])
