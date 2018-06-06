@@ -25,10 +25,12 @@ cleanGen: ## Clean the geneticAlgo package
 
 install: ## Install dependency
 	pip install lxml
-	sudo apt-get install python-numpy python-scipy 
-
+	pip install numpy
+	pip install matplotlib
+	
 installTravis: ## Install dependency for Travis io
 	pip install lxml
+	pip install matplotlib
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

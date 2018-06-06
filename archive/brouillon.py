@@ -34,7 +34,7 @@ Ry = [[6, 0],
 	inciMatrix = []
 	for j in range(len(Sj)):
 		for	inputTile in self.xForYList[allYForIndex.index(Sj[j])][1]:
-
+			
 			pass
 
 	 5  0  8  2  4  9  1  7  3  4

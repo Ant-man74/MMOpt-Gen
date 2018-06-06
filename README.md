@@ -19,17 +19,10 @@ To launch the optimization algorythm use:
 
     make main
   
-To launch the test and if the test pass the optimization algorythm use:
+## Note
 
-    make all
-    
-To launch just the test use:
+As of rigth now only one kernel can be treated at a time, to change it, go into schedulerHandler.py and change:
 
-    make pytest
-
-To clean the whole repository or a specific repository use
-
-    make clean
-    make cleanTest
-    make cleanGen
+ - l33 : SchedulingHandler.extractTiles('fileName',Number) 
+ - l69 : SchedulingHandler.extractTiles('fileName',Number) 
 
