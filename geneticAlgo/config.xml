@@ -4,11 +4,11 @@
 		
 		<param>
 			<name>popSize</name>
-			<value>100</value>
+			<value>50</value>
 		</param>
 		<param>
 			<name>mutationRate</name>
-			<value>10</value>
+			<value>15</value>
 		</param>
 		<param>
 			<name>crossOverRate</name>
@@ -16,7 +16,7 @@
 		</param>
 		<param>
 			<name>reproductionRate</name>
-			<value>80</value>
+			<value>100</value>
 		</param>
 		<param>
 			<name>selectionMethod</name>
@@ -24,12 +24,20 @@
 		</param>
 		<param>
 			<name>maxTour</name>
-			<value>500</value>
+			<value>200</value>
 		</param>
 	</paramsList>
 	
 	<!-- mmopt parameters -->
 	<paramsList id="mmopt">
+		<param>
+			<name>kernel</name>
+			<value>test_4_</value>
+		</param>
+		<param>
+			<name>kernelNumber</name>
+			<value>15</value>
+		</param>
 		<param>
 			<name>alpha</name>
 			<value>2</value>
@@ -47,17 +55,17 @@
 		<!-- Gene  2-->
 		<param>
 			<name>foresigthRange</name>
-			<value>10; 15</value>
+			<value>5; 20</value>
 		</param>
 		<!-- Gene  3-->
 		<param>
 			<name>tileKeepingRange</name>
-			<value>0 ; 10</value>
+			<value>0 ; 5</value>
 		</param>
 		<!-- Gene  4-->
 		<param>
 			<name>coefAllUseRange</name>
-			<value>1 ; 20</value>
+			<value>1 ; 10</value>
 		</param>
 		<!-- Gene  5-->
 		<param>
@@ -70,7 +78,7 @@
 	<paramsList id="reportOption">
 		<param>
 			<name>wantedGeneration</name>
-			<value>1 ; 100; 300; 500</value>
+			<value>1 ; 100;200</value>
 		</param>
 		<!--Available stats: buffer, prefetch, delta, foresigth, tileKeeping, coefAllUse, coefNextUse -->
 		<param>

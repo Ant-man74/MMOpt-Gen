@@ -16,10 +16,14 @@ class SchedulingHandler:
 	
 	alpha = 0
 	beta = 0
+	kernel = ""
+	kernelNumber = 0
 
 	def __init__(self):
 		self.alpha = int(XmlHandler.getItemFrom("mmopt","alpha"))
 		self.beta = int(XmlHandler.getItemFrom("mmopt","beta"))
+		self.kernel = XmlHandler.getItemFrom("mmopt","kernel")
+		self.kernelNumber = int(XmlHandler.getItemFrom("mmopt","kernelNumber"))
 
 	"""
 	Execute the ECM algorythm according to the parameters
@@ -30,7 +34,7 @@ class SchedulingHandler:
 		Z, N, T = 0, 0, 0
 		#16 is the number of images to do (numer of file in /Kernel)
 		#for k in range(16):
-		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
+		Y,Ry = SchedulingHandler.extractTiles(self.kernel,self.kernelNumber)
 		X = SchedulingHandler.InputTile(Ry)
 
 		#0 is ECM
@@ -62,11 +66,10 @@ class SchedulingHandler:
 	Retrieve the maximum and minimum number of buffer necessary for the algorithm to work on ONE kernel
 	To have it work with all kernel uncomment all the line inside
 	"""
-	@staticmethod
-	def setBufferRange():
+	def setBufferRange(self):
 		allBufferRange = []
 		#for k in range(16):
-		Y,Ry = SchedulingHandler.extractTiles('test_4_',15)
+		Y,Ry = SchedulingHandler.extractTiles(self.kernel,self.kernelNumber)
 		Zmin = SchedulingHandler.MinNbBuffer(Ry)
 		Zmax = SchedulingHandler.MaxBuffersNb(Ry)
 		allBufferRange.append([Zmin, Zmax])
